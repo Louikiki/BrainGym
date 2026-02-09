@@ -55,6 +55,17 @@ class BrainGymApp {
             });
         });
 
+        // 绑定返回首页按钮事件
+        const backHomeButtons = document.querySelectorAll('.back-home-btn');
+        backHomeButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const moduleName = e.target.dataset.module;
+                if (moduleName) {
+                    this.switchModule(moduleName);
+                }
+            });
+        });
+
         // 监听浏览器后退/前进按钮
         window.addEventListener('popstate', (e) => {
             const moduleName = e.state?.module || 'home';

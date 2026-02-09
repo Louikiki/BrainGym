@@ -12,8 +12,22 @@
 
 class SchulteGame {
     constructor() {
+        // 关卡配置
+        this.levels = [
+            { size: 3, name: '3×3' },
+            { size: 4, name: '4×4' },
+            { size: 5, name: '5×5' },
+            { size: 6, name: '6×6' },
+            { size: 7, name: '7×7' },
+            { size: 8, name: '8×8' },
+            { size: 9, name: '9×9' },
+            { size: 10, name: '10×10' }
+        ];
+        this.currentLevel = 0; // 从0开始索引
+        this.completedLevels = [];
+        
         // 游戏配置
-        this.gridSize = 5;
+        this.gridSize = this.levels[this.currentLevel].size;
         this.contentType = 'number'; // 'number' 或 'letter'
         this.totalItems = this.gridSize * this.gridSize;
         
@@ -67,8 +81,6 @@ class SchulteGame {
     bindEvents() {
         const startBtn = document.querySelector('#schulte-game .start-game-btn');
         const resetBtn = document.querySelector('#schulte-game .reset-game-btn');
-        const gridSizeSelect = document.getElementById('schulte-grid-size');
-        const contentTypeSelect = document.getElementById('schulte-content-type');
 
         if (startBtn) {
             startBtn.addEventListener('click', () => this.startGame());
@@ -78,68 +90,32 @@ class SchulteGame {
             resetBtn.addEventListener('click', () => this.resetGame());
         }
 
-        if (gridSizeSelect) {
-            gridSizeSelect.addEventListener('change', (e) => {
-                this.gridSize = parseInt(e.target.value);
-                this.totalItems = this.gridSize * this.gridSize;
-                if (!this.isRunning) {
-                    this.updateGridSizeClass();
-                    this.updateUI();
-                }
-            });
-        }
-
-        if (contentTypeSelect) {
-            contentTypeSelect.addEventListener('change', (e) => {
-                this.contentType = e.target.value;
-                
-                // 字母模式下限制网格大小最多为5×5
-                const gridSizeSelect = document.getElementById('schulte-grid-size');
-                if (this.contentType === 'letter' && gridSizeSelect) {
-                    // 保存当前选择的网格大小
-                    const currentSize = parseInt(gridSizeSelect.value);
-                    
-                    // 清空并重新添加选项
-                    gridSizeSelect.innerHTML = '';
-                    for (let i = 3; i <= 5; i++) {
-                        const option = document.createElement('option');
-                        option.value = i;
-                        option.textContent = `${i}×${i}`;
-                        if (i === currentSize && currentSize <= 5) {
-                            option.selected = true;
-                        } else if (i === 5) {
-                            option.selected = true;
-                        }
-                        gridSizeSelect.appendChild(option);
-                    }
-                    
-                    // 更新网格大小
-                    this.gridSize = Math.min(currentSize, 5);
+        // 绑定关卡步骤点击事件
+        const steps = document.querySelectorAll('.level-steps .step');
+        steps.forEach(step => {
+            step.addEventListener('click', (e) => {
+                const level = parseInt(e.target.dataset.level) - 1; // 转换为0-based索引
+                if (level <= this.currentLevel && !this.isRunning) {
+                    this.currentLevel = level;
+                    this.gridSize = this.levels[this.currentLevel].size;
                     this.totalItems = this.gridSize * this.gridSize;
-                } else if (this.contentType === 'number' && gridSizeSelect) {
-                    // 数字模式下恢复所有网格大小选项
-                    gridSizeSelect.innerHTML = '';
-                    for (let i = 3; i <= 10; i++) {
-                        const option = document.createElement('option');
-                        option.value = i;
-                        option.textContent = `${i}×${i}`;
-                        if (i === 5) {
-                            option.selected = true;
-                        }
-                        gridSizeSelect.appendChild(option);
-                    }
-                    
-                    // 更新网格大小
-                    this.gridSize = 5;
-                    this.totalItems = this.gridSize * this.gridSize;
-                }
-                
-                if (!this.isRunning) {
                     this.updateGridSizeClass();
                     this.clearGrid();
                     this.updateUI();
                 }
             });
+        });
+    }
+
+    /**
+     * 更新关卡UI显示
+     */
+    updateLevelUI() {
+        // 更新当前关卡显示
+        const levelDisplay = document.getElementById('schulte-level');
+        
+        if (levelDisplay) {
+            levelDisplay.textContent = this.currentLevel + 1;
         }
     }
 
@@ -172,6 +148,18 @@ class SchulteGame {
         this.isRunning = true;
         this.startTime = Date.now();
 
+        // 为当前关卡设置固定的内容类型
+        if (this.currentLevel >= 0 && this.currentLevel <= 2) {
+            // 第1-3关随机选择数字或字母
+            this.contentType = Math.random() > 0.5 ? 'number' : 'letter';
+        } else {
+            // 第4关及以上使用数字模式（因为字母只有26个，无法满足更大的网格）
+            this.contentType = 'number';
+        }
+
+        // 隐藏除信息和方格外的其他元素
+        this.toggleGameElements(false);
+
         // 更新UI
         this.updateUI();
         this.updateGridSizeClass();
@@ -185,12 +173,43 @@ class SchulteGame {
     }
 
     /**
+     * 切换游戏元素的显示/隐藏
+     * @param {boolean} show - 是否显示
+     */
+    toggleGameElements(show) {
+        const header = document.querySelector('.header');
+        const moduleHeader = document.querySelector('#schulte .module-header');
+        const gameProgress = document.querySelector('.game-progress');
+        const gameControls = document.querySelector('.game-controls');
+        
+        if (header) {
+            header.style.display = show ? 'block' : 'none';
+        }
+        
+        if (moduleHeader) {
+            moduleHeader.style.display = show ? 'block' : 'none';
+        }
+        
+        if (gameProgress) {
+            gameProgress.style.display = show ? 'block' : 'none';
+        }
+        
+        if (gameControls) {
+            gameControls.style.display = show ? 'flex' : 'none';
+        }
+    }
+
+    /**
      * 重置游戏
      */
     resetGame() {
         this.stopGame();
         this.currentItem = 1;
         this.errorCount = 0;
+        
+        // 恢复隐藏的元素
+        this.toggleGameElements(true);
+        
         this.updateUI();
         this.clearGrid();
         this.updateGridSizeClass();
@@ -215,7 +234,12 @@ class SchulteGame {
         const grid = document.getElementById('schulte-grid');
         if (!grid) return;
 
+        // 恢复grid的display为grid，以便网格正确显示
+        grid.style.display = 'grid';
+
+        // 完全清除网格内容，包括所有单元格和遮罩层
         grid.innerHTML = '';
+        grid.classList.add('has-items');
 
         // 生成项目数组
         const items = this.generateItems();
@@ -255,7 +279,10 @@ class SchulteGame {
     generateItems() {
         const items = [];
         
-        if (this.contentType === 'number') {
+        // 使用在startGame中设置的固定内容类型
+        let currentContentType = this.contentType;
+        
+        if (currentContentType === 'number') {
             for (let i = 1; i <= this.totalItems; i++) {
                 items.push({
                     value: i,
@@ -421,12 +448,271 @@ class SchulteGame {
                 contentType: this.contentType,
                 errorCount: this.errorCount,
                 totalItems: this.totalItems,
-                completed: true
+                completed: true,
+                level: this.currentLevel + 1
             });
         }
 
-        // 显示结果
-        this.showResult(time);
+        // 标记当前关卡为已完成
+        if (!this.completedLevels.includes(this.currentLevel)) {
+            this.completedLevels.push(this.currentLevel);
+        }
+
+        // 检查是否还有下一关
+        if (this.currentLevel < this.levels.length - 1) {
+            // 保存当前关卡信息
+            const completedLevel = this.currentLevel;
+            const currentTime = time;
+            
+            // 显示关卡完成提示（保留方格数字）
+            this.showLevelComplete(currentTime, completedLevel);
+            
+            // 进入下一关（在用户点击按钮后）
+        } else {
+            // 所有关卡完成（保留方格数字）
+            this.showGameComplete(time);
+        }
+
+        // 恢复隐藏的元素（在显示完成提示后）
+        this.toggleGameElements(true);
+    }
+
+    /**
+     * 显示关卡完成提示
+     * @param {number} time - 用时（秒）
+     * @param {number} completedLevel - 已完成的关卡索引
+     */
+    showLevelComplete(time, completedLevel) {
+        const grid = document.getElementById('schulte-grid');
+        if (!grid) return;
+
+        const accuracy = this.calculateAccuracy();
+        const nextLevel = Math.min(this.levels.length - 1, this.currentLevel);
+
+        // 创建遮罩元素，不清除原有网格内容
+        const overlay = document.createElement('div');
+        overlay.className = 'grid-content';
+        overlay.innerHTML = `
+            <h3 style="font-size: 32px; margin-bottom: 20px;">
+                🎉 挑战成功！
+            </h3>
+            <p style="font-size: 24px; margin-bottom: 10px;">
+                用时：<span style="font-weight: 700; color: var(--primary-color);">${time.toFixed(2)}</span> 秒
+            </p>
+            <p style="font-size: 18px; margin-bottom: 10px;">
+                错误次数：<span style="font-weight: 700; color: var(--primary-color);">${this.errorCount}</span> 次
+            </p>
+            <p style="font-size: 18px; margin-bottom: 20px;">
+                准确率：<span style="font-weight: 700; color: var(--primary-color);">${accuracy.toFixed(1)}</span>%
+            </p>
+            <p style="font-size: 20px; margin-bottom: 20px; font-weight: 600;">
+                即将进入第 ${completedLevel + 2} 关：${this.levels[completedLevel + 1].name}
+            </p>
+            <p style="font-size: 16px; margin-bottom: 30px;">
+                ${this.getPerformanceComment(time, this.errorCount)}
+            </p>
+            <div class="game-controls">
+                ${this.currentLevel > 0 ? `
+                <button class="control-btn prev-level-btn" style="padding: 12px 32px; font-size: 16px;">
+                    上一关
+                </button>
+                ` : ''}
+                <button class="control-btn restart-game-btn" style="padding: 12px 32px; font-size: 16px;">
+                    再玩一次
+                </button>
+                ${this.currentLevel < this.levels.length - 1 ? `
+                <button class="control-btn next-level-btn" style="padding: 12px 32px; font-size: 16px;">
+                    进入下一关
+                </button>
+                ` : ''}
+            </div>
+        `;
+
+        // 添加遮罩到网格
+        grid.appendChild(overlay);
+        
+        // 确保遮罩层显示
+        overlay.style.display = 'flex';
+        overlay.style.zIndex = '1000';
+        
+        // 调试信息
+        console.log('Overlay added to grid:', overlay.parentNode === grid);
+        console.log('Grid children count after:', grid.children.length);
+        console.log('Overlay display style:', overlay.style.display);
+        console.log('Overlay z-index:', overlay.style.zIndex);
+        
+        // 确保遮罩层显示
+        overlay.style.display = 'flex';
+        overlay.style.zIndex = '1000';
+        
+        // 确保遮罩层显示
+        overlay.style.display = 'flex';
+        overlay.style.zIndex = '1000';
+        
+        // 确保遮罩层显示
+        overlay.style.display = 'flex';
+        overlay.style.zIndex = '1000';
+        
+        // 确保遮罩层显示
+        overlay.style.display = 'flex';
+        overlay.style.zIndex = '1000';
+        
+        // 确保遮罩层显示
+        overlay.style.display = 'flex';
+        overlay.style.zIndex = '1000';
+        
+        // 确保遮罩层显示
+        overlay.style.display = 'flex';
+        overlay.style.zIndex = '1000';
+        
+        // 调试信息
+        console.log('showLevelComplete called');
+        console.log('Overlay added to grid:', overlay.parentNode === grid);
+        console.log('Grid children count:', grid.children.length);
+
+        // 绑定按钮事件
+        const nextLevelBtn = overlay.querySelector('.next-level-btn');
+        if (nextLevelBtn) {
+            nextLevelBtn.addEventListener('click', () => {
+                // 进入下一关
+                this.currentLevel++;
+                this.gridSize = this.levels[this.currentLevel].size;
+                this.totalItems = this.gridSize * this.gridSize;
+                this.updateGridSizeClass();
+                this.resetGame();
+                this.startGame();
+            });
+        }
+
+        const restartBtn = overlay.querySelector('.restart-game-btn');
+        if (restartBtn) {
+            restartBtn.addEventListener('click', () => {
+                this.resetGame();
+                this.startGame();
+            });
+        }
+
+        const prevLevelBtn = overlay.querySelector('.prev-level-btn');
+        if (prevLevelBtn) {
+            prevLevelBtn.addEventListener('click', () => {
+                // 设置当前关卡为上一关
+                this.currentLevel = Math.max(0, this.currentLevel - 1);
+                this.gridSize = this.levels[this.currentLevel].size;
+                this.totalItems = this.gridSize * this.gridSize;
+                this.updateGridSizeClass();
+                this.resetGame();
+                this.clearGrid(); // 确保显示开始按钮
+                this.updateUI(); // 更新UI显示当前关卡信息
+                
+                // 调试信息
+                console.log('Prev level clicked, current level:', this.currentLevel);
+            });
+        }
+
+        // 更新按钮状态
+        const startBtn = document.querySelector('#schulte-game .start-game-btn');
+        const resetBtn = document.querySelector('#schulte-game .reset-game-btn');
+        
+        if (startBtn) {
+            startBtn.style.display = 'none';
+        }
+        
+        if (resetBtn) {
+            resetBtn.style.display = 'none';
+        }
+    }
+
+    /**
+     * 显示游戏全部完成提示
+     * @param {number} time - 用时（秒）
+     */
+    showGameComplete(time) {
+        const grid = document.getElementById('schulte-grid');
+        if (!grid) return;
+
+        const accuracy = this.calculateAccuracy();
+
+        // 创建遮罩元素，不清除原有网格内容
+        const overlay = document.createElement('div');
+        overlay.className = 'grid-content';
+        overlay.innerHTML = `
+            <h3 style="font-size: 36px; margin-bottom: 20px;">
+                🏆 恭喜完成所有关卡！
+            </h3>
+            <p style="font-size: 24px; margin-bottom: 10px;">
+                用时：<span style="font-weight: 700; color: var(--primary-color);">${time.toFixed(2)}</span> 秒
+            </p>
+            <p style="font-size: 18px; margin-bottom: 10px;">
+                错误次数：<span style="font-weight: 700; color: var(--primary-color);">${this.errorCount}</span> 次
+            </p>
+            <p style="font-size: 18px; margin-bottom: 20px;">
+                准确率：<span style="font-weight: 700; color: var(--primary-color);">${accuracy.toFixed(1)}</span>%
+            </p>
+            <p style="font-size: 20px; margin-bottom: 30px; font-weight: 600;">
+                你已经成功挑战了所有 8 个关卡！
+            </p>
+            <p style="font-size: 16px; margin-bottom: 30px;">
+                你的专注力和视觉搜索能力已经得到了很好的训练！继续保持练习，挑战更高的水平！
+            </p>
+            <div class="game-controls">
+                <button class="control-btn prev-level-btn" style="padding: 12px 32px; font-size: 16px;">
+                    上一关
+                </button>
+                <button class="control-btn restart-game-btn" style="padding: 12px 32px; font-size: 16px;">
+                    重新开始
+                </button>
+            </div>
+        `;
+
+        // 添加遮罩到网格
+        grid.appendChild(overlay);
+        
+        // 确保遮罩层显示
+        overlay.style.display = 'flex';
+        overlay.style.zIndex = '1000';
+        
+        // 调试信息
+        console.log('showGameComplete called');
+        console.log('Overlay added to grid:', overlay.parentNode === grid);
+        console.log('Grid children count:', grid.children.length);
+
+        // 绑定按钮事件
+        const restartBtn = overlay.querySelector('.restart-game-btn');
+        if (restartBtn) {
+            restartBtn.addEventListener('click', () => {
+                this.resetGame();
+                this.currentLevel = 0;
+                this.gridSize = this.levels[this.currentLevel].size;
+                this.totalItems = this.gridSize * this.gridSize;
+                this.completedLevels = [];
+                this.updateGridSizeClass();
+                this.clearGrid();
+                this.updateUI();
+            });
+        }
+
+        const prevLevelBtn = overlay.querySelector('.prev-level-btn');
+        if (prevLevelBtn) {
+            prevLevelBtn.addEventListener('click', () => {
+                this.currentLevel = Math.max(0, this.currentLevel - 1);
+                this.gridSize = this.levels[this.currentLevel].size;
+                this.totalItems = this.gridSize * this.gridSize;
+                this.updateGridSizeClass();
+                this.resetGame();
+            });
+        }
+
+        // 更新按钮状态
+        const startBtn = document.querySelector('#schulte-game .start-game-btn');
+        const resetBtn = document.querySelector('#schulte-game .reset-game-btn');
+        
+        if (startBtn) {
+            startBtn.style.display = 'none';
+        }
+        
+        if (resetBtn) {
+            resetBtn.style.display = 'none';
+        }
     }
 
     /**
@@ -439,25 +725,85 @@ class SchulteGame {
 
         const accuracy = this.calculateAccuracy();
 
-        grid.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                <h3 style="font-size: 32px; color: var(--primary-color); margin-bottom: 20px;">
-                    🎉 恭喜完成！
-                </h3>
-                <p style="font-size: 24px; margin-bottom: 10px;">
-                    用时：<span style="font-weight: 700; color: var(--primary-color);">${time.toFixed(2)}</span> 秒
-                </p>
-                <p style="font-size: 18px; margin-bottom: 10px;">
-                    错误次数：<span style="font-weight: 700; color: var(--primary-color);">${this.errorCount}</span> 次
-                </p>
-                <p style="font-size: 18px; margin-bottom: 20px;">
-                    准确率：<span style="font-weight: 700; color: var(--primary-color);">${accuracy.toFixed(1)}</span>%
-                </p>
-                <p style="font-size: 16px; color: var(--text-secondary);">
-                    ${this.getPerformanceComment(time, this.errorCount)}
-                </p>
+        // 创建遮罩元素，不清除原有网格内容
+        const overlay = document.createElement('div');
+        overlay.className = 'grid-content';
+        overlay.innerHTML = `
+            <h3 style="font-size: 32px; margin-bottom: 20px;">
+                🎉 恭喜完成！
+            </h3>
+            <p style="font-size: 24px; margin-bottom: 10px;">
+                用时：<span style="font-weight: 700;">${time.toFixed(2)}</span> 秒
+            </p>
+            <p style="font-size: 18px; margin-bottom: 10px;">
+                错误次数：<span style="font-weight: 700;">${this.errorCount}</span> 次
+            </p>
+            <p style="font-size: 18px; margin-bottom: 20px;">
+                准确率：<span style="font-weight: 700;">${accuracy.toFixed(1)}</span>%
+            </p>
+            <p style="font-size: 16px; margin-bottom: 30px;">
+                ${this.getPerformanceComment(time, this.errorCount)}
+            </p>
+            <div class="game-controls">
+                ${this.currentLevel > 0 ? `
+                <button class="control-btn prev-level-btn" style="padding: 12px 32px; font-size: 16px;">
+                    上一关
+                </button>
+                ` : ''}
+                <button class="control-btn restart-game-btn" style="padding: 12px 32px; font-size: 16px;">
+                    再玩一次
+                </button>
+                ${this.currentLevel < this.levels.length - 1 ? `
+                <button class="control-btn next-level-btn" style="padding: 12px 32px; font-size: 16px;">
+                    下一关
+                </button>
+                ` : ''}
             </div>
         `;
+
+        // 添加遮罩到网格
+        grid.appendChild(overlay);
+        
+        // 确保遮罩层显示
+        overlay.style.display = 'flex';
+        overlay.style.zIndex = '1000';
+        
+        // 调试信息
+        console.log('showTimeoutResult called');
+        console.log('Overlay added to grid:', overlay.parentNode === grid);
+        console.log('Grid children count:', grid.children.length);
+
+        // 绑定按钮事件
+        const restartBtn = overlay.querySelector('.restart-game-btn');
+        if (restartBtn) {
+            restartBtn.addEventListener('click', () => {
+                this.resetGame();
+                this.startGame();
+            });
+        }
+
+        const nextLevelBtn = overlay.querySelector('.next-level-btn');
+        if (nextLevelBtn) {
+            nextLevelBtn.addEventListener('click', () => {
+                this.currentLevel = Math.min(this.levels.length - 1, this.currentLevel + 1);
+                this.gridSize = this.levels[this.currentLevel].size;
+                this.totalItems = this.gridSize * this.gridSize;
+                this.updateGridSizeClass();
+                this.resetGame();
+                this.startGame();
+            });
+        }
+
+        const prevLevelBtn = overlay.querySelector('.prev-level-btn');
+        if (prevLevelBtn) {
+            prevLevelBtn.addEventListener('click', () => {
+                this.currentLevel = Math.max(0, this.currentLevel - 1);
+                this.gridSize = this.levels[this.currentLevel].size;
+                this.totalItems = this.gridSize * this.gridSize;
+                this.updateGridSizeClass();
+                this.resetGame();
+            });
+        }
 
         // 保存记录
         if (typeof storageManager !== 'undefined') {
@@ -481,8 +827,7 @@ class SchulteGame {
         const resetBtn = document.querySelector('#schulte-game .reset-game-btn');
         
         if (startBtn) {
-            startBtn.style.display = 'inline-block';
-            startBtn.textContent = '再玩一次';
+            startBtn.style.display = 'none';
         }
         
         if (resetBtn) {
@@ -544,6 +889,7 @@ class SchulteGame {
             
             // 检查是否超时（当实际用时等于或超过限时）
             if (currentTime >= timeLimit) {
+                clearInterval(this.timerInterval); // 清除计时器，避免多次调用
                 this.handleTimeout();
             }
         }, 100);
@@ -562,6 +908,15 @@ class SchulteGame {
 
         // 显示超时结果
         this.showTimeoutResult();
+        
+        // 恢复隐藏的元素（在显示超时结果后）
+        this.toggleGameElements(true);
+        
+        // 调试信息
+        console.log('handleTimeout called');
+        console.log('Current level:', this.currentLevel);
+        console.log('Grid size:', this.gridSize);
+        console.log('Time limit:', this.timeLimitMap[this.gridSize]);
     }
 
     /**
@@ -569,41 +924,93 @@ class SchulteGame {
      */
     showTimeoutResult() {
         const grid = document.getElementById('schulte-grid');
-        if (!grid) return;
+        if (!grid) {
+            console.log('showTimeoutResult: grid not found');
+            return;
+        }
+        
+        // 调试信息
+        console.log('showTimeoutResult called');
+        console.log('Grid found:', grid);
+        console.log('Grid children count before:', grid.children.length);
 
         const completedItems = this.currentItem - 1;
         const accuracy = this.calculateAccuracy();
         const actualTime = (Date.now() - this.startTime) / 1000;
-        const timeLimit = this.timeLimitMap[this.gridSize] || 0;
 
-        grid.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                <h3 style="font-size: 32px; color: var(--primary-color); margin-bottom: 20px;">
-                    ❌ 挑战失败
-                </h3>
-                <p style="font-size: 24px; margin-bottom: 10px;">
-                    用时：<span style="font-weight: 700; color: var(--primary-color);">${actualTime.toFixed(2)}</span> 秒
-                </p>
-                <p style="font-size: 18px; margin-bottom: 10px;">
-                    限时：<span style="font-weight: 700; color: var(--primary-color);">${timeLimit}</span> 秒
-                </p>
-                <p style="font-size: 24px; margin-bottom: 10px;">
-                    完成：<span style="font-weight: 700; color: var(--primary-color);">${completedItems}</span> / ${this.totalItems}
-                </p>
-                <p style="font-size: 18px; margin-bottom: 10px;">
-                    错误次数：<span style="font-weight: 700; color: var(--primary-color);">${this.errorCount}</span> 次
-                </p>
-                <p style="font-size: 18px; margin-bottom: 20px;">
-                    准确率：<span style="font-weight: 700; color: var(--primary-color);">${accuracy.toFixed(1)}</span>%
-                </p>
-                <p style="font-size: 16px; color: var(--text-secondary);">
-                    ${this.getTimeoutComment(completedItems, this.totalItems)}
-                </p>
+        // 创建遮罩元素，不清除原有网格内容
+        const overlay = document.createElement('div');
+        overlay.className = 'grid-content';
+        overlay.innerHTML = `
+            <h3 style="font-size: 32px; margin-bottom: 20px;">
+                ❌ 挑战失败
+            </h3>
+            <p style="font-size: 24px; margin-bottom: 10px;">
+                用时：<span style="font-weight: 700; color: var(--primary-color);">${actualTime.toFixed(2)}</span> 秒
+            </p>
+            <p style="font-size: 18px; margin-bottom: 10px;">
+                错误次数：<span style="font-weight: 700; color: var(--primary-color);">${this.errorCount}</span> 次
+            </p>
+            <p style="font-size: 18px; margin-bottom: 20px;">
+                准确率：<span style="font-weight: 700; color: var(--primary-color);">${accuracy.toFixed(1)}</span>%
+            </p>
+            <p style="font-size: 16px; margin-bottom: 30px;">
+                ${this.getTimeoutComment(completedItems, this.totalItems)}
+            </p>
+            <div class="game-controls">
+                ${this.currentLevel > 0 ? `
+                <button class="control-btn prev-level-btn" style="padding: 12px 32px; font-size: 16px;">
+                    上一关
+                </button>
+                ` : ''}
+                <button class="control-btn restart-game-btn" style="padding: 12px 32px; font-size: 16px;">
+                    再玩一次
+                </button>
+                ${this.currentLevel < this.levels.length - 1 ? `
+                <button class="control-btn next-level-btn" style="padding: 12px 32px; font-size: 16px; background-color: #ccc; cursor: not-allowed;">
+                    下一关
+                </button>
+                ` : ''}
             </div>
         `;
 
+        // 添加遮罩到网格
+        grid.appendChild(overlay);
+        
+        // 确保遮罩层显示
+        overlay.style.display = 'flex';
+        overlay.style.zIndex = '1000';
+
+        // 绑定按钮事件
+        const restartBtn = overlay.querySelector('.restart-game-btn');
+        if (restartBtn) {
+            restartBtn.addEventListener('click', () => {
+                this.resetGame();
+                this.startGame();
+            });
+        }
+
+        const nextLevelBtn = overlay.querySelector('.next-level-btn');
+        if (nextLevelBtn) {
+            nextLevelBtn.addEventListener('click', () => {
+                alert('挑战成功才可以进入下一关');
+            });
+        }
+
+        const prevLevelBtn = overlay.querySelector('.prev-level-btn');
+        if (prevLevelBtn) {
+            prevLevelBtn.addEventListener('click', () => {
+                this.currentLevel = Math.max(0, this.currentLevel - 1);
+                this.gridSize = this.levels[this.currentLevel].size;
+                this.totalItems = this.gridSize * this.gridSize;
+                this.updateGridSizeClass();
+                this.resetGame();
+            });
+        }
+
         // 保存记录
         if (typeof storageManager !== 'undefined') {
+            const timeLimit = this.timeLimitMap[this.gridSize] || 0;
             storageManager.addRecord('schulte', {
                 time: actualTime,
                 timeLimit: timeLimit,
@@ -623,8 +1030,7 @@ class SchulteGame {
         const resetBtn = document.querySelector('#schulte-game .reset-game-btn');
         
         if (startBtn) {
-            startBtn.style.display = 'inline-block';
-            startBtn.textContent = '再玩一次';
+            startBtn.style.display = 'none';
         }
         
         if (resetBtn) {
@@ -656,10 +1062,13 @@ class SchulteGame {
      * 更新UI显示
      */
     updateUI() {
+        // 使用在startGame中设置的固定内容类型
+        let currentContentType = this.contentType;
+        
         // 更新当前目标
         const currentDisplay = document.getElementById('schulte-current');
         if (currentDisplay) {
-            if (this.contentType === 'number') {
+            if (currentContentType === 'number') {
                 currentDisplay.textContent = this.currentItem;
             } else {
                 // 显示字母
@@ -704,7 +1113,36 @@ class SchulteGame {
     clearGrid() {
         const grid = document.getElementById('schulte-grid');
         if (grid) {
-            grid.innerHTML = '<p style="grid-column: 1 / -1; text-align: center; color: var(--text-secondary); padding: 40px;">选择网格大小和类型，点击"开始游戏"按钮开始训练</p>';
+            // 暂时将grid的display设置为block，以便游戏规则正确显示
+            grid.style.display = 'block';
+            
+            grid.innerHTML = `
+                <div class="grid-content game-rules-container">
+                    <div class="game-rules">
+                        <h3>游戏规则</h3>
+                        <p>按顺序快速点击数字或字母，越快越好！</p>
+                    </div>
+                    <div class="game-controls">
+                        <button class="control-btn start-game-btn">开始游戏</button>
+                        <button class="control-btn reset-game-btn" style="display:none;">重新开始</button>
+                    </div>
+                </div>
+            `;
+            
+            // 移除has-items类
+            grid.classList.remove('has-items');
+            
+            // 重新绑定按钮事件
+            const startBtn = grid.querySelector('.start-game-btn');
+            const resetBtn = grid.querySelector('.reset-game-btn');
+            
+            if (startBtn) {
+                startBtn.addEventListener('click', () => this.startGame());
+            }
+            
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => this.resetGame());
+            }
         }
     }
 
