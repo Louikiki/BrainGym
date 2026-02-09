@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainGym - 大脑训练</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">🧠 BrainGym</h1>
+            <nav class="nav">
+                <button class="nav-btn active" data-module="home">首页</button>
+                <button class="nav-btn" data-module="schulte">舒尔特表</button>
+                <button class="nav-btn" data-module="stroop">Stroop效应</button>
+                <button class="nav-btn" data-module="memory">序列记忆</button>
+                <button class="nav-btn" data-module="auditory">听觉注意</button>
+                <button class="nav-btn" data-module="stats">统计数据</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主内容区域 -->
+    <main class="main">
+        <div class="container">
+            <!-- 首页模块 -->
+            <section id="home" class="module active">
+                <div class="welcome-section">
+                    <h2>欢迎来到BrainGym！</h2>
+                    <p class="subtitle">通过有趣的游戏训练你的大脑，提升注意力和记忆力</p>
+                </div>
+                
+                <div class="modules-grid">
+                    <div class="module-card" data-module="schulte">
+                        <div class="card-icon">🔢</div>
+                        <h3>舒尔特表</h3>
+                        <p>按顺序快速找到数字，训练专注力和视觉搜索能力</p>
+                        <button class="start-btn">开始训练</button>
+                    </div>
+                    
+                    <div class="module-card" data-module="stroop">
+                        <div class="card-icon">🎨</div>
+                        <h3>Stroop效应</h3>
+                        <p>识别文字颜色而非内容，挑战你的认知控制能力</p>
+                        <button class="start-btn">开始训练</button>
+                    </div>
+                    
+                    <div class="module-card" data-module="memory">
+                        <div class="card-icon">💾</div>
+                        <h3>序列记忆</h3>
+                        <p>记住并重复数字序列，提升工作记忆容量</p>
+                        <button class="start-btn">开始训练</button>
+                    </div>
+                    
+                    <div class="module-card" data-module="auditory">
+                        <div class="card-icon">👂</div>
+                        <h3>听觉注意</h3>
+                        <p>在多个声音中识别目标声音，训练听觉选择性注意</p>
+                        <button class="start-btn">开始训练</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 舒尔特表模块 -->
+            <section id="schulte" class="module">
+                <div class="module-header">
+                    <h2>🔢 舒尔特表训练</h2>
+                    <p class="description">按顺序快速点击数字或字母，越快越好！</p>
+                </div>
+                <div class="game-area" id="schulte-game">
+                    <div class="game-config">
+                        <div class="config-group">
+                            <label class="config-label">内容类型：</label>
+                            <select class="config-select" id="schulte-content-type">
+                                <option value="number" selected>数字</option>
+                                <option value="letter">字母</option>
+                            </select>
+                        </div>
+                        <div class="config-group">
+                            <label class="config-label">网格大小：</label>
+                            <select class="config-select" id="schulte-grid-size">
+                                <option value="3">3×3</option>
+                                <option value="4">4×4</option>
+                                <option value="5" selected>5×5</option>
+                                <option value="6">6×6</option>
+                                <option value="7">7×7</option>
+                                <option value="8">8×8</option>
+                                <option value="9">9×9</option>
+                                <option value="10">10×10</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="game-controls">
+                        <button class="control-btn start-game-btn">开始游戏</button>
+                        <button class="control-btn reset-game-btn" style="display:none;">重新开始</button>
+                    </div>
+                    <div class="game-info">
+                        <div class="info-item">
+                            <span class="label">当前目标</span>
+                            <span class="value" id="schulte-current">1</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">已用时间</span>
+                            <span class="value" id="schulte-elapsed">0.0s</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">限时</span>
+                            <span class="value" id="schulte-time">0.0s</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">错误次数</span>
+                            <span class="value" id="schulte-errors">0</span>
+                        </div>
+                    </div>
+                    <div class="schulte-grid" id="schulte-grid"></div>
+                </div>
+            </section>
+
+            <!-- Stroop效应模块 -->
+            <section id="stroop" class="module">
+                <div class="module-header">
+                    <h2>🎨 Stroop效应训练</h2>
+                    <p class="description">挑战你的认知控制能力！</p>
+                </div>
+                <div class="game-area" id="stroop-game">
+                    <div class="game-config">
+                        <div class="config-group">
+                            <label class="config-label">游戏模式：</label>
+                            <select class="config-select" id="stroop-mode">
+                                <option value="classic" selected>经典模式（选择颜色）</option>
+                                <option value="reverse">逆向模式（选择文字）</option>
+                            </select>
+                        </div>
+                        <div class="config-group">
+                            <label class="config-label">题目数量：</label>
+                            <select class="config-select" id="stroop-question-count">
+                                <option value="10">10题</option>
+                                <option value="20" selected>20题</option>
+                                <option value="30">30题</option>
+                                <option value="50">50题</option>
+                            </select>
+                        </div>
+                        <div class="config-group">
+                            <label class="config-label">单题限时：</label>
+                            <select class="config-select" id="stroop-time-limit">
+                                <option value="0">不限时</option>
+                                <option value="2">2秒</option>
+                                <option value="3" selected>3秒</option>
+                                <option value="5">5秒</option>
+                                <option value="10">10秒</option>
+                            </select>
+                        </div>
+                        <div class="config-group">
+                            <label class="config-label">干扰级别：</label>
+                            <select class="config-select" id="stroop-difficulty">
+                                <option value="easy">简单</option>
+                                <option value="medium" selected>中等</option>
+                                <option value="hard">困难</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="game-controls">
+                        <button class="control-btn start-game-btn">开始游戏</button>
+                        <button class="control-btn reset-game-btn" style="display:none;">重新开始</button>
+                    </div>
+                    <div class="game-info">
+                        <div class="info-item">
+                            <span class="label">当前题目：</span>
+                            <span class="value" id="stroop-current-question">1/20</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">正确：</span>
+                            <span class="value" id="stroop-correct">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">错误：</span>
+                            <span class="value" id="stroop-incorrect">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">剩余时间：</span>
+                            <span class="value" id="stroop-time">3s</span>
+                        </div>
+                    </div>
+                    <div class="stroop-display" id="stroop-display"></div>
+                    <div class="stroop-options" id="stroop-options"></div>
+                </div>
+            </section>
+
+            <!-- 序列记忆模块 -->
+            <section id="memory" class="module">
+                <div class="module-header">
+                    <h2>🧠 序列工作记忆训练</h2>
+                    <p class="description">挑战你的工作记忆能力！</p>
+                </div>
+                <div class="game-area" id="memory-game">
+                    <div class="game-config">
+                        <div class="config-group">
+                            <label class="config-label">训练模式：</label>
+                            <select class="config-select" id="memory-mode">
+                                <option value="visual" selected>视觉空间（3×3网格）</option>
+                                <option value="digit">数字序列</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="game-controls">
+                        <button class="control-btn start-game-btn">开始训练</button>
+                        <button class="control-btn reset-game-btn" style="display:none;">重新开始</button>
+                    </div>
+                    <div class="game-info">
+                        <div class="info-item">
+                            <span class="label">序列长度：</span>
+                            <span class="value" id="memory-length">3</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">连续正确：</span>
+                            <span class="value" id="memory-correct-streak">0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">记忆广度：</span>
+                            <span class="value" id="memory-span">3</span>
+                        </div>
+                    </div>
+                    <div class="memory-display" id="memory-display"></div>
+                    <div class="memory-input" id="memory-input"></div>
+                    <div class="memory-grid" id="memory-grid"></div>
+                </div>
+            </section>
+
+            <!-- 听觉注意模块 -->
+            <section id="auditory" class="module">
+                <div class="module-header">
+                    <h2>👂 听觉注意训练</h2>
+                    <p class="description">听声音序列，识别目标声音出现的位置</p>
+                </div>
+                <div class="game-area" id="auditory-game">
+                    <div class="game-controls">
+                        <button class="control-btn start-game-btn">开始游戏</button>
+                        <button class="control-btn reset-game-btn" style="display:none;">重新开始</button>
+                    </div>
+                    <div class="game-info">
+                        <div class="info-item">
+                            <span class="label">当前关卡：</span>
+                            <span class="value" id="auditory-level">1</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">正确率：</span>
+                            <span class="value" id="auditory-accuracy">0%</span>
+                        </div>
+                    </div>
+                    <div class="auditory-display" id="auditory-display">
+                        <div class="target-sound-info">
+                            <span class="label">目标声音：</span>
+                            <span class="value" id="target-sound">-</span>
+                        </div>
+                        <div class="play-sound-btn" id="play-sound-btn">▶ 播放声音</div>
+                    </div>
+                    <div class="auditory-input" id="auditory-input"></div>
+                </div>
+            </section>
+
+            <!-- 统计数据模块 -->
+            <section id="stats" class="module">
+                <div class="module-header">
+                    <h2>📊 训练统计</h2>
+                    <p class="description">查看你的训练进度和成绩</p>
+                </div>
+                <div class="stats-container">
+                    <div class="stats-tabs">
+                        <button class="stats-tab active" data-tab="schulte">舒尔特表</button>
+                        <button class="stats-tab" data-tab="stroop">Stroop效应</button>
+                        <button class="stats-tab" data-tab="memory">序列记忆</button>
+                        <button class="stats-tab" data-tab="auditory">听觉注意</button>
+                    </div>
+                    <div class="stats-content">
+                        <div class="stats-summary" id="stats-summary"></div>
+                        <div class="stats-chart">
+                            <canvas id="performance-chart"></canvas>
+                        </div>
+                        <div class="stats-history">
+                            <h3>历史记录</h3>
+                            <div class="history-list" id="history-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 BrainGym - 让大脑训练变得有趣</p>
+        </div>
+    </footer>
+
+    <!-- 第三方库 -->
+    <script src="lib/chart.min.js"></script>
+    <script src="lib/howler.min.js"></script>
+
+    <!-- 工具函数 -->
+    <script src="utils/storage.js"></script>
+    <script src="utils/stats.js"></script>
+    <script src="utils/audio.js"></script>
+    <script src="utils/visuals.js"></script>
+
+    <!-- 训练模块 -->
+    <script src="modules/schulte.js"></script>
+    <script src="modules/stroop.js"></script>
+    <script src="modules/memory.js"></script>
+    <script src="modules/auditory.js"></script>
+
+    <!-- 主应用 -->
+    <script src="app.js"></script>
+</body>
+</html>
