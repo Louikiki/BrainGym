@@ -52,16 +52,12 @@
             <section id="schulte" class="module">
                 <div class="module-header">
                     <button class="back-home-btn" data-module="home">🏠</button>
-                    <div class="header-content">
-                        <h2>🔢 舒尔特表训练</h2>  
-                        <p class="description">挑战你的视觉搜索能力！</p>         
-                    </div>
                 </div>
                 <div class="game-area" id="schulte-game">
                     <div class="game-info">
                         <div class="info-item">
-                            <span class="label">当前目标</span>
-                            <span class="value" id="schulte-current">1</span>
+                            <span class="label">错误次数</span>
+                            <span class="value" id="schulte-errors">0</span>
                         </div>
                         <div class="info-item">
                             <span class="label">已用时间</span>
@@ -72,8 +68,8 @@
                             <span class="value" id="schulte-time">0.0s</span>
                         </div>
                         <div class="info-item">
-                            <span class="label">错误次数</span>
-                            <span class="value" id="schulte-errors">0</span>
+                            <span class="label">当前目标</span>
+                            <span class="value" id="schulte-current">1</span>
                         </div>
                     </div>
                     <div class="schulte-grid" id="schulte-grid">
@@ -166,23 +162,8 @@
             <section id="memory" class="module">
                 <div class="module-header">
                     <button class="back-home-btn" data-module="home">🏠</button>
-                    <h2>🧠 序列工作记忆训练</h2>
-                    <p class="description">挑战你的工作记忆能力！</p>
                 </div>
                 <div class="game-area" id="memory-game">
-                    <div class="game-config">
-                        <div class="config-group">
-                            <label class="config-label">训练模式：</label>
-                            <select class="config-select" id="memory-mode">
-                                <option value="visual" selected>视觉空间（3×3网格）</option>
-                                <option value="digit">数字序列</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="game-controls">
-                        <button class="control-btn start-game-btn">开始训练</button>
-                        <button class="control-btn reset-game-btn" style="display:none;">重新开始</button>
-                    </div>
                     <div class="game-info">
                         <div class="info-item">
                             <span class="label">序列长度：</span>
@@ -197,9 +178,24 @@
                             <span class="value" id="memory-span">3</span>
                         </div>
                     </div>
-                    <div class="memory-display" id="memory-display"></div>
-                    <div class="memory-input" id="memory-input"></div>
-                    <div class="memory-grid" id="memory-grid"></div>
+                    <div class="memory-content">
+                        <div class="game-config">
+                            <div class="config-group">
+                                <label class="config-label">训练模式：</label>
+                                <select class="config-select" id="memory-mode">
+                                    <option value="visual" selected>视觉空间（3×3网格）</option>
+                                    <option value="digit">数字序列</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="game-controls">
+                            <button class="control-btn start-game-btn">开始训练</button>
+                            <button class="control-btn reset-game-btn" style="display:none;">重新开始</button>
+                        </div>
+                        <div class="memory-display" id="memory-display"></div>
+                        <div class="memory-input" id="memory-input"></div>
+                        <div class="memory-grid" id="memory-grid"></div>
+                    </div>
                 </div>
             </section>
 

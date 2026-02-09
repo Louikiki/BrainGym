@@ -55,7 +55,10 @@ class SchulteGame {
         this.colors = [
             'linear-gradient(135deg, #A8D8EA, #C9E8F0)',
             'linear-gradient(135deg, #95E1D3, #B5F5E8)',
-            'linear-gradient(135deg, #FFE66D, #FFF0A0)'
+            'linear-gradient(135deg, #FFE66D, #FFF0A0)',
+            'linear-gradient(135deg, #FFB997, #FFD4B3)',
+            'linear-gradient(135deg, #C7CEEA, #E0F4FF)',
+            'linear-gradient(135deg, #FF9AA2, #FFC3D0)'
         ];
         
         this.isInitialized = false;
