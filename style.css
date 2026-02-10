@@ -265,7 +265,7 @@ body {
     .game-area {
         max-width: 95vw;
         height: auto;
-        min-height: 600px;
+        min-height:600px;
     }
 }
 
@@ -715,10 +715,29 @@ body {
     align-items: center;
     text-align: center;
     z-index: 10;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     color: white;
     padding: var(--spacing-lg);
     border-radius: var(--radius-lg);
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+.grid-content h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    text-align: center;
+    width: 100%;
+    color: white;
+}
+
+.grid-content p {
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: center;
+    line-height: 1.4;
+    width: 100%;
+    color: #f0f0f0;
 }
 
 .grid-content .game-controls {
@@ -727,14 +746,60 @@ body {
     justify-content: center;
     flex-wrap: wrap;
     margin-top: 20px;
+    width: 100%;
 }
 
-.grid-content h3 {
-    color: white;
+.grid-content .control-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+    margin: 5px;
+    flex: 1;
+    max-width: 150px;
 }
 
-.grid-content p {
-    color: #f0f0f0;
+/* 响应式设计，确保遮罩在不同屏幕尺寸上都能正确显示 */
+@media (max-width: 768px) {
+    .grid-content {
+        padding: var(--spacing-md);
+    }
+    
+    .grid-content h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+    
+    .grid-content p {
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+    
+    .grid-content .control-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+        max-width: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-content {
+        padding: var(--spacing-sm);
+    }
+    
+    .grid-content h3 {
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+    
+    .grid-content p {
+        font-size: 11px;
+        margin-bottom: 6px;
+    }
+    
+    .grid-content .control-btn {
+        padding: 5px 10px;
+        font-size: 11px;
+        max-width: 100px;
+    }
 }
 
 .grid-content span {
