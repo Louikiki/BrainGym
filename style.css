@@ -245,10 +245,10 @@ body {
 .game-area {
     background: var(--bg-card);
     border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
     box-shadow: var(--shadow-lg);
     display: flex;
-    gap: var(--spacing-lg);
+    gap: var(--spacing-md);
     align-items: flex-start;
 }
 
@@ -259,8 +259,10 @@ body {
 
 .game-area .schulte-grid {
     flex-grow: 1;
-    max-width: none;
-    max-height: none;
+    max-width: 600px;
+    max-height: 600px;
+    width: 600px;
+    height: 600px;
 }
 
 .game-area .memory-content {
@@ -268,6 +270,65 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
+}
+
+.game-area .game-info {
+    flex-shrink: 0;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: center;
+    padding: var(--spacing-sm);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+}
+
+.game-area .game-info .level-info {
+    text-align: center;
+}
+
+.game-area .game-info .level-info h3 {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 700;
+    text-align: center;
+}
+
+.game-area .game-info .level-info h3 #schulte-level {
+    color: #FF6B6B;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.game-area .game-info .level-info h3 span:not(#schulte-level) {
+    color: var(--text-secondary);
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.game-area .game-info .restart-btn-container {
+    margin-top: var(--spacing-md);
+    display: flex;
+    justify-content: center;
+}
+
+.game-area .game-info .restart-btn-container .restart-btn {
+    background: #FF6B6B;
+    color: white;
+    border: 2px solid #FF6B6B;
+    padding: var(--spacing-xs) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.game-area .game-info .restart-btn-container .restart-btn:hover {
+    background: white;
+    color: #FF6B6B;
+    transform: scale(1.05);
 }
 
 /* 游戏进度区域 */

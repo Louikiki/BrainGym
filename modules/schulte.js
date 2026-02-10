@@ -84,6 +84,7 @@ class SchulteGame {
     bindEvents() {
         const startBtn = document.querySelector('#schulte-game .start-game-btn');
         const resetBtn = document.querySelector('#schulte-game .reset-game-btn');
+        const restartBtn = document.querySelector('#schulte-game .restart-btn');
 
         if (startBtn) {
             startBtn.addEventListener('click', () => this.startGame());
@@ -91,6 +92,10 @@ class SchulteGame {
 
         if (resetBtn) {
             resetBtn.addEventListener('click', () => this.resetGame());
+        }
+
+        if (restartBtn) {
+            restartBtn.addEventListener('click', () => this.resetGame());
         }
 
         // 绑定关卡步骤点击事件
@@ -181,16 +186,11 @@ class SchulteGame {
      */
     toggleGameElements(show) {
         const header = document.querySelector('.header');
-        const moduleHeader = document.querySelector('#schulte .module-header');
         const gameProgress = document.querySelector('.game-progress');
         const gameControls = document.querySelector('.game-controls');
         
         if (header) {
             header.style.display = show ? 'block' : 'none';
-        }
-        
-        if (moduleHeader) {
-            moduleHeader.style.display = show ? 'block' : 'none';
         }
         
         if (gameProgress) {
@@ -1068,6 +1068,9 @@ class SchulteGame {
      * 更新UI显示
      */
     updateUI() {
+        // 更新当前关卡显示
+        this.updateLevelUI();
+        
         // 使用在startGame中设置的固定内容类型
         let currentContentType = this.contentType;
         
