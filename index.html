@@ -46,6 +46,7 @@
                         <button class="start-btn">开始训练</button>
                     </div>
                 </div>
+            </div>
             </section>
 
             <!-- 舒尔特表模块 -->
@@ -54,28 +55,30 @@
                     <button class="back-home-btn" data-module="home">🏠</button>
                 </div>
                 <div class="game-area" id="schulte-game">
-                    <div class="game-info">
+                    <div class="left-content">
                         <div class="level-info">
-                            <h3>第<span id="schulte-level">1</span>关/共8关</h3>
+                            <h3>第 <span id="current-level" style="color: #FF6B6B;">1</span> 关 / 共 <span id="total-levels" style="color: #4ECDC4;">8</span> 关</h3>
                         </div>
-                        <div class="info-item">
-                            <span class="label">错误次数</span>
-                            <span class="value" id="schulte-errors">0</span>
+                        <div class="game-info">
+                            <div class="info-item">
+                                <span class="label">错误次数</span>
+                                <span class="value" id="schulte-errors">0</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">已用时间</span>
+                                <span class="value" id="schulte-elapsed">0.0s</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">限时</span>
+                                <span class="value" id="schulte-time">0.0s</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">当前目标</span>
+                                <span class="value" id="schulte-current">1</span>
+                            </div>
                         </div>
-                        <div class="info-item">
-                            <span class="label">已用时间</span>
-                            <span class="value" id="schulte-elapsed">0.0s</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">限时</span>
-                            <span class="value" id="schulte-time">0.0s</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">当前目标</span>
-                            <span class="value" id="schulte-current">1</span>
-                        </div>
-                        <div class="restart-btn-container">
-                            <button class="control-btn restart-btn">重新开始</button>
+                        <div class="retry-button-container" style="display: none;">
+                            <button class="control-btn retry-game-btn">重新挑战</button>
                         </div>
                     </div>
                     <div class="schulte-grid" id="schulte-grid">

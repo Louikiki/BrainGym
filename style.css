@@ -202,6 +202,10 @@ body {
     margin-bottom: var(--spacing-lg);
     position: relative;
     flex-direction: column;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-lg);
 }
 
 .header-content {
@@ -211,7 +215,7 @@ body {
 
 .back-home-btn {
     position: absolute;
-    left: var(--spacing-md);
+    left: 0;
     top: 50%;
     transform: translateY(-50%);
     padding: var(--spacing-sm);
@@ -245,24 +249,50 @@ body {
 .game-area {
     background: var(--bg-card);
     border-radius: var(--radius-lg);
-    padding: var(--spacing-md);
+    padding: var(--spacing-lg);
     box-shadow: var(--shadow-lg);
     display: flex;
-    gap: var(--spacing-md);
+    gap: var(--spacing-lg);
     align-items: flex-start;
+    width: 1200px;
+    height: 600px;
+    margin: 0 auto;
 }
 
-.game-area .game-info {
+.game-area .left-content {
     flex-shrink: 0;
-    min-width: 200px;
+    min-width: 300px;
+    display: block;
+}
+
+.retry-button-container {
+    margin-top: var(--spacing-md);
+    display: flex;
+    justify-content: center;
+}
+
+.retry-game-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.retry-game-btn:hover {
+    background: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .game-area .schulte-grid {
     flex-grow: 1;
     max-width: 600px;
     max-height: 600px;
-    width: 600px;
-    height: 600px;
 }
 
 .game-area .memory-content {
@@ -270,65 +300,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md);
-}
-
-.game-area .game-info {
-    flex-shrink: 0;
-    min-width: 220px;
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
-    align-items: center;
-    padding: var(--spacing-sm);
-    background: var(--bg-secondary);
-    border-radius: var(--radius-md);
-}
-
-.game-area .game-info .level-info {
-    text-align: center;
-}
-
-.game-area .game-info .level-info h3 {
-    font-size: 20px;
-    margin: 0;
-    font-weight: 700;
-    text-align: center;
-}
-
-.game-area .game-info .level-info h3 #schulte-level {
-    color: #FF6B6B;
-    font-size: 24px;
-    font-weight: 800;
-}
-
-.game-area .game-info .level-info h3 span:not(#schulte-level) {
-    color: var(--text-secondary);
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.game-area .game-info .restart-btn-container {
-    margin-top: var(--spacing-md);
-    display: flex;
-    justify-content: center;
-}
-
-.game-area .game-info .restart-btn-container .restart-btn {
-    background: #FF6B6B;
-    color: white;
-    border: 2px solid #FF6B6B;
-    padding: var(--spacing-xs) var(--spacing-lg);
-    border-radius: var(--radius-md);
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.game-area .game-info .restart-btn-container .restart-btn:hover {
-    background: white;
-    color: #FF6B6B;
-    transform: scale(1.05);
 }
 
 /* 游戏进度区域 */
@@ -342,25 +313,39 @@ body {
 .level-info {
     display: flex;
     align-items: center;
-    gap: var(--spacing-xs);
-    margin-bottom: var(--spacing-sm);
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    margin-top: var(--spacing-md);
     justify-content: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    font-family: 'Arial', sans-serif;
 }
 
-.level-label {
-    font-size: 16px;
-    font-weight: 500;
+.level-info h3 {
+    font-size: 18px;
+    font-weight: 600;
     color: var(--text-primary);
+    margin: 0;
+    text-align: center;
 }
 
-.level-value {
-    font-size: 24px;
+.level-info span {
+    font-size: 20px;
     font-weight: 700;
-    color: var(--primary-color);
-    background: linear-gradient(135deg, var(--primary-color), #FF8E8E);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    padding: 0 8px;
+    border-radius: 4px;
+}
+
+.level-info #current-level {
+    color: #FF6B6B;
+    background: rgba(255, 107, 107, 0.1);
+}
+
+.level-info #total-levels {
+    color: #4ECDC4;
+    background: rgba(78, 205, 196, 0.1);
 }
 
 .level-name {
@@ -404,6 +389,25 @@ body {
 @keyframes progress-shine {
     0% { left: -100%; }
     100% { left: 100%; }
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    20% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    80% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
 }
 
 
@@ -630,38 +634,61 @@ body {
     background: white;
     color: var(--text-primary);
     z-index: 1;
-    box-shadow: none;
+    box-shadow: var(--shadow-sm);
     width: 100%;
     max-width: 500px;
     margin: 0 auto;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-xl);
     border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
 }
 
 .grid-content.game-rules-container .game-controls {
-    margin-top: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    width: 100%;
+}
+
+.grid-content.game-rules-container .control-btn {
+    flex: 1;
+    max-width: 200px;
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: 18px;
+    font-weight: 600;
 }
 
 .game-rules {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+    width: 100%;
 }
 
 .game-rules h3 {
-    font-size: 20px;
+    font-size: 24px;
     color: var(--primary-color);
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+    font-weight: 700;
 }
 
 .game-rules p {
-    font-size: 16px;
+    font-size: 18px;
     color: var(--text-secondary);
-    margin-bottom: var(--spacing-xs);
-    line-height: 1.5;
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.6;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* 游戏规则的特殊样式，保持白色背景 */
 .grid-content.game-rules-container {
-    background: rgba(255, 255, 255, 0.95);
+    background: white;
     color: var(--text-primary);
 }
 
