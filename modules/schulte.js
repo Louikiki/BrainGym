@@ -749,9 +749,6 @@ class SchulteGame {
                 this.resetGame();
                 this.clearGrid(); // 确保显示开始按钮
                 this.updateUI(); // 更新UI显示当前关卡信息
-                
-                // 调试信息
-                console.log('Prev level clicked, current level:', this.currentLevel);
             });
         }
 
@@ -816,11 +813,6 @@ class SchulteGame {
         // 确保遮罩层显示
         overlay.style.display = 'flex';
         overlay.style.zIndex = '1000';
-        
-        // 调试信息
-        console.log('showGameComplete called');
-        console.log('Overlay added to grid:', overlay.parentNode === grid);
-        console.log('Grid children count:', grid.children.length);
 
         // 绑定按钮事件
         const restartBtn = overlay.querySelector('.restart-game-btn');
