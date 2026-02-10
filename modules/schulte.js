@@ -323,6 +323,9 @@ class SchulteGame {
         cell.dataset.row = row;
         cell.dataset.col = col;
         
+        // 设置文字颜色为黑色
+        cell.style.color = '#000000';
+        
         // 分配颜色（确保相邻格子颜色不同）
         const colorIndex = this.getColorIndex(row, col, gridArray);
         cell.style.background = this.colors[colorIndex];
