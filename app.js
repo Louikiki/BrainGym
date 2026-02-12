@@ -6,7 +6,7 @@
 class BrainGymApp {
     constructor() {
         this.currentModule = 'home';
-        this.modules = ['home', 'schulte', 'stroop', 'memory', 'auditory', 'stats'];
+        this.modules = ['home', 'schulte', 'stroop', 'auditory', 'stats'];
         this.init();
     }
 
@@ -81,7 +81,11 @@ class BrainGymApp {
         moduleCards.forEach(card => {
             card.addEventListener('click', (e) => {
                 const moduleName = card.dataset.module;
-                if (moduleName) {
+                if (moduleName === 'memory') {
+                    // 序列记忆模块直接跳转到digit-span-memory.html页面
+                    window.location.href = 'digit-span-memory.html';
+                } else if (moduleName !== 'auditory' && moduleName) {
+                    // 听觉注意模块不执行任何操作，因为它是待开发状态
                     this.switchModule(moduleName);
                 }
             });
@@ -91,7 +95,11 @@ class BrainGymApp {
                 startBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const moduleName = card.dataset.module;
-                    if (moduleName) {
+                    if (moduleName === 'memory') {
+                        // 序列记忆模块的开始按钮直接跳转到digit-span-memory.html页面
+                        window.location.href = 'digit-span-memory.html';
+                    } else if (moduleName !== 'auditory' && moduleName) {
+                        // 听觉注意模块的开始按钮不执行任何操作，因为它是待开发状态
                         this.switchModule(moduleName);
                     }
                 });
@@ -145,11 +153,6 @@ class BrainGymApp {
             StroopGame.stop();
         }
 
-        // 停止序列记忆游戏
-        if (typeof memoryTrainer !== 'undefined' && memoryTrainer.isRunning) {
-            memoryTrainer.stopTraining();
-        }
-
         // 停止听觉注意游戏
         if (typeof AuditoryGame !== 'undefined' && AuditoryGame.isRunning) {
             AuditoryGame.stop();
@@ -199,9 +202,6 @@ class BrainGymApp {
             case 'stroop':
                 this.initStroopModule();
                 break;
-            case 'memory':
-                this.initMemoryModule();
-                break;
             case 'auditory':
                 this.initAuditoryModule();
                 break;
@@ -233,15 +233,6 @@ class BrainGymApp {
     initStroopModule() {
         if (typeof stroopGame !== 'undefined') {
             stroopGame.init();
-        }
-    }
-
-    /**
-     * 初始化序列记忆模块
-     */
-    initMemoryModule() {
-        if (typeof memoryTrainer !== 'undefined') {
-            memoryTrainer.init();
         }
     }
 
