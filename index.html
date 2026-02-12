@@ -25,25 +25,28 @@
                         <button class="start-btn">开始训练</button>
                     </div>
                     
-                    <div class="module-card" data-module="stroop">
+                    <div class="module-card">
                         <div class="card-icon">🎨</div>
                         <h3>Stroop效应</h3>
                         <p>识别文字颜色而非内容，挑战你的认知控制能力</p>
-                        <button class="start-btn">开始训练</button>
+                        <button class="start-btn" onclick="window.location.href='stroop-animation.html'">开始训练</button>
                     </div>
                     
                     <div class="module-card" data-module="memory">
                         <div class="card-icon">💾</div>
                         <h3>序列记忆</h3>
                         <p>记住并重复数字序列，提升工作记忆容量</p>
-                        <button class="start-btn">开始训练</button>
+                        <button class="start-btn" onclick="window.location.href='digit-span-memory.html'">开始训练</button>
                     </div>
                     
                     <div class="module-card" data-module="auditory">
                         <div class="card-icon">👂</div>
                         <h3>听觉注意</h3>
                         <p>在多个声音中识别目标声音，训练听觉选择性注意</p>
-                        <button class="start-btn">开始训练</button>
+                        <button class="start-btn" disabled>开始训练</button>
+                        <div class="card-overlay">
+                            <div class="overlay-text">待开发</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -100,70 +103,41 @@
             <section id="stroop" class="module">
                 <div class="module-header">
                     <button class="back-home-btn" data-module="home">🏠</button>
-                    <h2>🎨 Stroop效应训练</h2>
-                    <p class="description">挑战你的认知控制能力！</p>
                 </div>
-                <div class="game-area" id="stroop-game">
-                    <div class="game-config">
-                        <div class="config-group">
-                            <label class="config-label">游戏模式：</label>
-                            <select class="config-select" id="stroop-mode">
-                                <option value="classic" selected>经典模式（选择颜色）</option>
-                                <option value="reverse">逆向模式（选择文字）</option>
-                            </select>
+                <div class="game-area" id="stroop-game" style="background-color: #222222; border-radius: 24px; padding: 20px;">
+                    <div class="left-content" style="flex-shrink: 0; min-width: 250px; max-width: 250px; display: flex; flex-direction: column; gap: 20px; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 12px;">
+                        <div class="game-rules" style="text-align: center; font-size: 16px; color: var(--text-primary); line-height: 1.4;">
+                            <h4 style="font-size: 18px; margin-bottom: 10px; color: var(--primary-color);">规则说明</h4>
+                            <p>请说出每个字的颜色</p>
+                            <p>而不是字本身</p>
                         </div>
-                        <div class="config-group">
-                            <label class="config-label">题目数量：</label>
-                            <select class="config-select" id="stroop-question-count">
-                                <option value="10">10题</option>
-                                <option value="20" selected>20题</option>
-                                <option value="30">30题</option>
-                                <option value="50">50题</option>
-                            </select>
+                        <div class="game-controls" style="display: flex; flex-direction: column; gap: 10px;">
+                            <button class="control-btn start-game-btn">开始游戏</button>
+                            <button class="control-btn reset-game-btn" style="display:none;">重新开始</button>
                         </div>
-                        <div class="config-group">
-                            <label class="config-label">单题限时：</label>
-                            <select class="config-select" id="stroop-time-limit">
-                                <option value="0">不限时</option>
-                                <option value="2">2秒</option>
-                                <option value="3" selected>3秒</option>
-                                <option value="5">5秒</option>
-                                <option value="10">10秒</option>
-                            </select>
-                        </div>
-                        <div class="config-group">
-                            <label class="config-label">干扰级别：</label>
-                            <select class="config-select" id="stroop-difficulty">
-                                <option value="easy">简单</option>
-                                <option value="medium" selected>中等</option>
-                                <option value="hard">困难</option>
-                            </select>
+                        <div class="game-info" style="display: none;">
+                            <div class="info-item">
+                                <span class="label">当前题目：</span>
+                                <span class="value" id="stroop-current-question">1/20</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">正确：</span>
+                                <span class="value" id="stroop-correct">0</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">错误：</span>
+                                <span class="value" id="stroop-incorrect">0</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">剩余时间：</span>
+                                <span class="value" id="stroop-time">3s</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="game-controls">
-                        <button class="control-btn start-game-btn">开始游戏</button>
-                        <button class="control-btn reset-game-btn" style="display:none;">重新开始</button>
+                    <div class="right-content" style="flex-grow: 1; display: flex; flex-direction: column; gap: 20px;">
+                        <div class="stroop-display" id="stroop-display" style="background-color: #222222; border-radius: 24px; padding: 20px;"></div>
+                        <div class="stroop-options" id="stroop-options"></div>
                     </div>
-                    <div class="game-info">
-                        <div class="info-item">
-                            <span class="label">当前题目：</span>
-                            <span class="value" id="stroop-current-question">1/20</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">正确：</span>
-                            <span class="value" id="stroop-correct">0</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">错误：</span>
-                            <span class="value" id="stroop-incorrect">0</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">剩余时间：</span>
-                            <span class="value" id="stroop-time">3s</span>
-                        </div>
-                    </div>
-                    <div class="stroop-display" id="stroop-display"></div>
-                    <div class="stroop-options" id="stroop-options"></div>
                 </div>
             </section>
 

@@ -231,8 +231,8 @@ class BrainGymApp {
      * 初始化Stroop效应模块
      */
     initStroopModule() {
-        if (typeof StroopGame !== 'undefined') {
-            StroopGame.init();
+        if (typeof stroopGame !== 'undefined') {
+            stroopGame.init();
         }
     }
 

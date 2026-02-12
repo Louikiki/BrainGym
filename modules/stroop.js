@@ -15,10 +15,10 @@ class StroopGame {
         this.colors = [
             { name: '红色', code: '#FF6B6B', english: 'red' },
             { name: '蓝色', code: '#4ECDC4', english: 'blue' },
-            { name: '绿色', code: '#95E1D3', english: 'green' },
+            { name: '白色', code: '#FFFFFF', english: 'white' },
             { name: '黄色', code: '#FFE66D', english: 'yellow' },
             { name: '紫色', code: '#C7CEEA', english: 'purple' },
-            { name: '橙色', code: '#FFB997', english: 'orange' }
+            { name: '黑色', code: '#000000', english: 'black' }
         ];
         
         // 游戏配置
@@ -60,10 +60,6 @@ class StroopGame {
     bindEvents() {
         const startBtn = document.querySelector('#stroop-game .start-game-btn');
         const resetBtn = document.querySelector('#stroop-game .reset-game-btn');
-        const modeSelect = document.getElementById('stroop-mode');
-        const questionCountSelect = document.getElementById('stroop-question-count');
-        const timeLimitSelect = document.getElementById('stroop-time-limit');
-        const difficultySelect = document.getElementById('stroop-difficulty');
 
         if (startBtn) {
             startBtn.addEventListener('click', () => this.startGame());
@@ -71,31 +67,6 @@ class StroopGame {
 
         if (resetBtn) {
             resetBtn.addEventListener('click', () => this.resetGame());
-        }
-
-        if (modeSelect) {
-            modeSelect.addEventListener('change', (e) => {
-                this.mode = e.target.value;
-                this.updateModeDescription();
-            });
-        }
-
-        if (questionCountSelect) {
-            questionCountSelect.addEventListener('change', (e) => {
-                this.questionCount = parseInt(e.target.value);
-            });
-        }
-
-        if (timeLimitSelect) {
-            timeLimitSelect.addEventListener('change', (e) => {
-                this.timeLimit = parseInt(e.target.value);
-            });
-        }
-
-        if (difficultySelect) {
-            difficultySelect.addEventListener('change', (e) => {
-                this.difficulty = e.target.value;
-            });
         }
     }
 
@@ -108,11 +79,62 @@ class StroopGame {
             return;
         }
 
-        const description = this.mode === 'classic' 
-            ? '选择文字显示的颜色，忽略文字本身的含义！' 
-            : '选择文字本身的含义，忽略文字显示的颜色！';
+        // 使用固定的六个颜色：黄蓝白黑红紫
+        const availableColors = this.colors.slice(0, 6);
+        
+        // 生成4x5矩阵 (4行5列)
+        const matrix = [];
+        const rows = 4;
+        const cols = 5;
+        
+        // 填充矩阵，确保上下左右相邻文字不同
+        for (let i = 0; i < rows; i++) {
+            matrix[i] = [];
+            for (let j = 0; j < cols; j++) {
+                // 可选的文字（排除上下左右相邻的文字）
+                let availableWords = [...availableColors];
+                
+                // 排除上方的文字
+                if (i > 0) {
+                    const aboveWord = matrix[i-1][j];
+                    availableWords = availableWords.filter(word => word.name !== aboveWord);
+                }
+                
+                // 排除左侧的文字
+                if (j > 0) {
+                    const leftWord = matrix[i][j-1];
+                    availableWords = availableWords.filter(word => word.name !== leftWord);
+                }
+                
+                // 随机选择文字
+                const randomWordIndex = Math.floor(Math.random() * availableWords.length);
+                const selectedWord = availableWords[randomWordIndex];
+                
+                // 存储文字
+                matrix[i][j] = selectedWord.name;
+            }
+        }
+        
+        // 生成矩阵HTML
+        let matrixHTML = '<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; padding: 20px; justify-content: center; align-content: center; background-color: #222222; border-radius: 24px;">'
+        
+        matrix.forEach(row => {
+            row.forEach(cell => {
+                matrixHTML += `
+                    <div class="stroop-word" style="color: #CCCCCC; font-size: 48px; text-align: center; padding: 10px;">
+                        ${cell}
+                    </div>
+                `;
+            });
+        });
+        
+        matrixHTML += '</div>';
 
-        display.innerHTML = `<p style="text-align: center; color: var(--text-secondary); padding: 40px;">${description}<br><br>点击"开始游戏"按钮开始训练</p>`;
+        display.innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+                ${matrixHTML}
+            </div>
+        `;
     }
 
     /**
@@ -148,26 +170,11 @@ class StroopGame {
      * 加载游戏配置
      */
     loadConfig() {
-        const modeSelect = document.getElementById('stroop-mode');
-        const questionCountSelect = document.getElementById('stroop-question-count');
-        const timeLimitSelect = document.getElementById('stroop-time-limit');
-        const difficultySelect = document.getElementById('stroop-difficulty');
-
-        if (modeSelect) {
-            this.mode = modeSelect.value;
-        }
-
-        if (questionCountSelect) {
-            this.questionCount = parseInt(questionCountSelect.value);
-        }
-
-        if (timeLimitSelect) {
-            this.timeLimit = parseInt(timeLimitSelect.value);
-        }
-
-        if (difficultySelect) {
-            this.difficulty = difficultySelect.value;
-        }
+        // 使用默认配置值
+        this.mode = 'classic';
+        this.questionCount = 20;
+        this.timeLimit = 3;
+        this.difficulty = 'medium';
     }
 
     /**
@@ -225,50 +232,93 @@ class StroopGame {
     }
 
     /**
-     * 生成题目
+     * 生成题目 - 4x5矩阵
      */
     generateQuestion() {
-        // 根据难度选择颜色数量
-        let availableColors = [...this.colors];
-        if (this.difficulty === 'easy') {
-            availableColors = availableColors.slice(0, 4);
-        } else if (this.difficulty === 'medium') {
-            availableColors = availableColors.slice(0, 5);
+        // 使用固定的六个颜色：黄蓝白黑红紫
+        const availableColors = this.colors.slice(0, 6);
+        
+        // 生成4x5矩阵 (4行5列)
+        this.matrix = [];
+        const rows = 4;
+        const cols = 5;
+        
+        // 填充矩阵，确保上下左右相邻文字不同
+        for (let i = 0; i < rows; i++) {
+            this.matrix[i] = [];
+            for (let j = 0; j < cols; j++) {
+                // 可选的文字（排除上下左右相邻的文字）
+                let availableWords = [...availableColors];
+                
+                // 排除上方的文字
+                if (i > 0) {
+                    const aboveWord = this.matrix[i-1][j];
+                    availableWords = availableWords.filter(word => word.name !== aboveWord.word.name);
+                }
+                
+                // 排除左侧的文字
+                if (j > 0) {
+                    const leftWord = this.matrix[i][j-1];
+                    availableWords = availableWords.filter(word => word.name !== leftWord.word.name);
+                }
+                
+                // 随机选择文字
+                const randomWordIndex = Math.floor(Math.random() * availableWords.length);
+                const selectedWord = availableWords[randomWordIndex];
+                
+                // 随机选择颜色，确保与文字含义不同
+                let availableColorOptions = [...availableColors];
+                availableColorOptions = availableColorOptions.filter(color => color.name !== selectedWord.name);
+                const randomColorIndex = Math.floor(Math.random() * availableColorOptions.length);
+                const selectedColor = availableColorOptions[randomColorIndex];
+                
+                // 存储文字和颜色
+                this.matrix[i][j] = {
+                    word: selectedWord,
+                    color: selectedColor
+                };
+            }
         }
+        
+        // 随机选择一个目标文字和颜色，用于游戏判断
+        // 注意：这里我们仍然使用传统的Stroop效应逻辑，即用户需要说出文字的颜色
+        // 在矩阵模式下，我们可以随机选择矩阵中的一个文字作为目标
+        const randomRow = Math.floor(Math.random() * rows);
+        const randomCol = Math.floor(Math.random() * cols);
+        const targetCell = this.matrix[randomRow][randomCol];
+        
+        this.currentWord = targetCell.word;
+        this.currentColor = targetCell.color;
 
-        // 随机选择文字
-        const randomWordIndex = Math.floor(Math.random() * availableColors.length);
-        this.currentWord = availableColors[randomWordIndex];
-
-        // 随机选择颜色，确保与文字含义不同
-        let randomColorIndex;
-        do {
-            randomColorIndex = Math.floor(Math.random() * availableColors.length);
-        } while (randomColorIndex === randomWordIndex);
-        this.currentColor = availableColors[randomColorIndex];
-
-        console.log(`Question ${this.currentQuestion}: "${this.currentWord.name}" in ${this.currentColor.name}`);
+        console.log(`Generated ${rows}x${cols} matrix for question ${this.currentQuestion}`);
+        console.log(`Target: "${this.currentWord.name}" in ${this.currentColor.name}`);
     }
 
     /**
-     * 更新文字显示
+     * 更新文字显示 - 显示4x5矩阵
      */
     updateDisplay() {
         const display = document.getElementById('stroop-display');
         if (!display) return;
 
-        const modeText = this.mode === 'classic' 
-            ? '选择文字显示的颜色' 
-            : '选择文字本身的含义';
+        // 生成矩阵HTML
+        let matrixHTML = '<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; padding: 20px; justify-content: center; align-content: center; background-color: #222222; border-radius: 24px;">'
+        
+        this.matrix.forEach(row => {
+            row.forEach(cell => {
+                matrixHTML += `
+                    <div class="stroop-word" style="color: ${cell.color.code}; font-size: 48px; text-align: center; padding: 10px;">
+                        ${cell.word.name}
+                    </div>
+                `;
+            });
+        });
+        
+        matrixHTML += '</div>';
 
         display.innerHTML = `
             <div style="text-align: center; padding: 20px;">
-                <p style="font-size: 18px; color: var(--text-secondary); margin-bottom: 40px;">
-                    ${modeText}
-                </p>
-                <div class="stroop-word" style="color: ${this.currentColor.code}; font-size: 72px;">
-                    ${this.currentWord.name}
-                </div>
+                ${matrixHTML}
             </div>
         `;
     }

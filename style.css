@@ -93,7 +93,7 @@ body {
 
 /* 主内容区域 */
 .main {
-    padding: var(--spacing-lg) 0;
+    padding: var(--spacing-xl) 0;
     min-height: calc(100vh - 200px);
 }
 
@@ -152,6 +152,7 @@ body {
     box-shadow: var(--shadow-lg);
     transition: all 0.3s ease;
     cursor: pointer;
+    position: relative;
 }
 
 .module-card:hover {
@@ -191,6 +192,53 @@ body {
 .start-btn:hover {
     transform: scale(1.05);
     box-shadow: var(--shadow-md);
+}
+
+/* 卡片遮罩层（用于标记待开发的模块） */
+.card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.overlay-text {
+    color: white;
+    font-size: 24px;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    transform: rotate(-15deg);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.7;
+        transform: rotate(-15deg) scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: rotate(-15deg) scale(1.1);
+    }
+    100% {
+        opacity: 0.7;
+        transform: rotate(-15deg) scale(1);
+    }
+}
+
+/* 禁用的开始按钮样式 */
+.start-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 /* 模块标题 */
@@ -258,15 +306,6 @@ body {
     height: 600px;
     margin: 0 auto;
     box-sizing: border-box;
-}
-
-/* 响应式设计，确保在不同屏幕尺寸上都能良好显示 */
-@media (max-width: 1200px) {
-    .game-area {
-        max-width: 95vw;
-        height: auto;
-        min-height:600px;
-    }
 }
 
 .game-area .left-content {

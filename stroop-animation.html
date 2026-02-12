@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stroop专注力训练游戏</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            padding-top: 60px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #ffffff;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .game-container {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.4);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+            background-color: rgba(255, 255, 255, 0.03);
+            padding: 30px;
+            border-radius: 16px;
+        }
+
+        .grid-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            border-radius: 12px;
+            opacity: 0.3;
+            color: #666666;
+            transform: scale(1);
+            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .grid-item.activated {
+            opacity: 1;
+            z-index: 10;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .btn.start {
+            background-color: rgba(107, 203, 119, 0.7);
+            color: white;
+        }
+
+        .btn.reset {
+            background-color: rgba(255, 107, 107, 0.7);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .back-btn {
+            padding: 5px 10px;
+            background-color: transparent;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+        }
+
+        .back-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .countdown {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 10rem;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.8);
+            z-index: 100;
+            display: none;
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        /* 儿童友好颜色 */
+        .color-red {
+            color: #FF6B6B;
+        }
+
+        .color-yellow {
+            color: #FFD93D;
+        }
+
+        .color-blue {
+            color: #4D96FF;
+        }
+
+        .color-green {
+            color: #6BCB77;
+        }
+
+        .color-purple {
+            color: #9D4EDD;
+        }
+
+        .color-black {
+            color: #555555;
+        }
+
+        .color-white {
+            color: #EEEEEE;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                padding-top: 40px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 20px;
+            }
+
+            .game-container {
+                padding: 20px;
+                border-radius: 16px;
+            }
+
+            .grid-container {
+                gap: 10px;
+                padding: 20px;
+            }
+
+            .grid-item {
+                font-size: 1.8rem;
+                border-radius: 8px;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+                min-width: 100px;
+            }
+
+            .countdown {
+                font-size: 6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 15px;
+            }
+
+            .game-container {
+                padding: 15px;
+                border-radius: 12px;
+            }
+
+            .grid-container {
+                gap: 8px;
+                padding: 15px;
+            }
+
+            .grid-item {
+                font-size: 1.5rem;
+                border-radius: 6px;
+            }
+
+            .btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+                min-width: 80px;
+            }
+
+            .countdown {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>
+        <button class="back-btn" onclick="window.location.href='index.html'">🏠</button>
+        Stroop专注力训练游戏
+    </h1>
+    
+    <div class="game-container">
+        <div class="grid-container" id="gridContainer"></div>
+        
+        <div class="controls">
+            <button class="btn start" id="startBtn">开始</button>
+            <button class="btn reset" id="resetBtn">重置</button>
+        </div>
+    </div>
+    
+    <div class="countdown" id="countdown">3</div>
+
+    <script>
+        // 颜色配置 - 儿童友好色板
+        const colors = [
+            { name: '红', className: 'color-red' },
+            { name: '黄', className: 'color-yellow' },
+            { name: '蓝', className: 'color-blue' },
+            { name: '绿', className: 'color-green' },
+            { name: '紫', className: 'color-purple' },
+            { name: '黑', className: 'color-black' },
+            { name: '白', className: 'color-white' }
+        ];
+
+        // DOM元素
+        const gridContainer = document.getElementById('gridContainer');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const countdown = document.getElementById('countdown');
+
+        // 游戏状态
+        let isRunning = false;
+        let currentIndex = 0;
+        let animationInterval = null;
+        let gridItems = [];
+        let gridWords = [];
+        let gridColorClasses = [];
+
+        /**
+         * 生成符合邻近去重规则的文字数组
+         */
+        function generateWords() {
+            const words = [];
+            const totalItems = 20;
+            
+            for (let i = 0; i < totalItems; i++) {
+                let availableColors = [...colors];
+                
+                // 排除左边的字
+                if (i > 0 && i % 5 !== 0) {
+                    const leftWord = words[i - 1];
+                    availableColors = availableColors.filter(color => color.name !== leftWord);
+                }
+                
+                // 排除上边的字
+                if (i >= 5) {
+                    const topWord = words[i - 5];
+                    availableColors = availableColors.filter(color => color.name !== topWord);
+                }
+                
+                // 随机选择一个字
+                const randomIndex = Math.floor(Math.random() * availableColors.length);
+                words.push(availableColors[randomIndex].name);
+            }
+            
+            return words;
+        }
+
+        /**
+         * 为每个字生成符合Stroop互斥规则的颜色
+         */
+        function generateColors(words) {
+            const colorClasses = [];
+            
+            for (let i = 0; i < words.length; i++) {
+                const word = words[i];
+                
+                // 排除与文字含义相同的颜色
+                let availableColors = colors.filter(color => color.name !== word);
+                
+                // 排除黑色和白色（灰色）
+                availableColors = availableColors.filter(color => color.className !== 'color-black' && color.className !== 'color-white');
+                
+                // 排除左边格子的颜色
+                if (i > 0 && i % 5 !== 0) {
+                    const leftColorClass = colorClasses[i - 1];
+                    availableColors = availableColors.filter(color => color.className !== leftColorClass);
+                }
+                
+                // 排除上边格子的颜色
+                if (i >= 5) {
+                    const topColorClass = colorClasses[i - 5];
+                    availableColors = availableColors.filter(color => color.className !== topColorClass);
+                }
+                
+                // 随机选择一个颜色
+                const randomIndex = Math.floor(Math.random() * availableColors.length);
+                colorClasses.push(availableColors[randomIndex].className);
+            }
+            
+            return colorClasses;
+        }
+
+        /**
+         * 初始化网格
+         */
+        function initGrid() {
+            gridContainer.innerHTML = '';
+            gridItems = [];
+            gridWords = [];
+            gridColorClasses = [];
+            
+            // 生成符合规则的文字和颜色
+            const words = generateWords();
+            const colorClasses = generateColors(words);
+            
+            gridWords = words;
+            gridColorClasses = colorClasses;
+            
+            for (let i = 0; i < words.length; i++) {
+                const gridItem = document.createElement('div');
+                gridItem.className = 'grid-item';
+                gridItem.textContent = words[i];
+                
+                gridContainer.appendChild(gridItem);
+                gridItems.push(gridItem);
+            }
+        }
+
+        /**
+         * 倒计时动画
+         */
+        function startCountdown(callback) {
+            let count = 3;
+            countdown.textContent = count;
+            countdown.style.display = 'block';
+            
+            const countdownInterval = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    countdown.textContent = count;
+                } else {
+                    clearInterval(countdownInterval);
+                    countdown.style.display = 'none';
+                    callback();
+                }
+            }, 1000);
+        }
+
+        /**
+         * 开始动画
+         */
+        function startAnimation() {
+            if (isRunning) return;
+            
+            // 弱化按钮
+            startBtn.style.opacity = '0.3';
+            startBtn.style.cursor = 'not-allowed';
+            resetBtn.style.opacity = '0.3';
+            resetBtn.style.cursor = 'not-allowed';
+            
+            // 先执行倒计时
+            startCountdown(() => {
+                isRunning = true;
+                currentIndex = 0;
+                
+                // 重置所有格子状态为深灰色
+                gridItems.forEach(item => {
+                    item.className = 'grid-item';
+                    item.style.color = '#666666';
+                    item.style.opacity = '0.3';
+                    item.style.transform = 'scale(1)';
+                });
+                
+                // 固定速度：1.0秒/个
+                const speed = 1000;
+                
+                // 开始逐个激活格子
+                animationInterval = setInterval(() => {
+                    if (currentIndex < gridItems.length) {
+                        // 激活当前格子
+                        const currentItem = gridItems[currentIndex];
+                        
+                        // 设置颜色
+                        const colorObj = colors.find(c => c.className === gridColorClasses[currentIndex]);
+                        if (colorObj) {
+                            currentItem.style.color = colorObj.className === 'color-white' ? '#EEEEEE' : 
+                                                  colorObj.className === 'color-black' ? '#555555' :
+                                                  colorObj.className === 'color-red' ? '#FF6B6B' :
+                                                  colorObj.className === 'color-yellow' ? '#FFD93D' :
+                                                  colorObj.className === 'color-blue' ? '#4D96FF' :
+                                                  colorObj.className === 'color-green' ? '#6BCB77' : '#9D4EDD';
+                        }
+                        
+                        currentItem.style.opacity = '1';
+                        
+                        // 立即恢复到初始状态（深灰色）
+                        setTimeout(() => {
+                            currentItem.style.color = '#666666';
+                            currentItem.style.opacity = '0.3';
+                        }, 1000);
+                        
+                        currentIndex++;
+                    } else {
+                        // 结束动画
+                        clearInterval(animationInterval);
+                        isRunning = false;
+                        
+                        // 等待最后一个汉字的setTimeout执行完（1秒）
+                        setTimeout(() => {
+                            // 显示所有文字刚才出现的颜色
+                            gridItems.forEach((item, index) => {
+                                const colorObj = colors.find(c => c.className === gridColorClasses[index]);
+                                if (colorObj) {
+                                    item.style.color = colorObj.className === 'color-white' ? '#EEEEEE' : 
+                                                          colorObj.className === 'color-black' ? '#555555' :
+                                                          colorObj.className === 'color-red' ? '#FF6B6B' :
+                                                          colorObj.className === 'color-yellow' ? '#FFD93D' :
+                                                          colorObj.className === 'color-blue' ? '#4D96FF' :
+                                                          colorObj.className === 'color-green' ? '#6BCB77' : '#9D4EDD';
+                                }
+                                item.style.opacity = '1';
+                                item.style.transform = 'scale(1)';
+                            });
+                            
+                            // 恢复按钮状态
+                            startBtn.style.opacity = '1';
+                            startBtn.style.cursor = 'pointer';
+                            resetBtn.style.opacity = '1';
+                            resetBtn.style.cursor = 'pointer';
+                        }, 1000);
+                    }
+                }, speed);
+            });
+        }
+
+        /**
+         * 重置游戏
+         */
+        function resetGame() {
+            clearInterval(animationInterval);
+            isRunning = false;
+            currentIndex = 0;
+            
+            // 重新生成网格
+            initGrid();
+        }
+
+        // 事件监听
+        startBtn.addEventListener('click', () => {
+            if (!isRunning) {
+                startAnimation();
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            resetGame();
+        });
+
+        // 初始化
+        initGrid();
+    </script>
+</body>
+</html>
