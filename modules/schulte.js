@@ -268,15 +268,15 @@ class SchulteGame {
             </p>
             <div class="game-controls">
                 ${this.currentLevel > 0 ? `
-                <button class="control-btn prev-level-btn" style="padding: 12px 32px; font-size: 16px;">
+                <button class="control-btn prev-level-btn" style="padding: 12px 32px; font-size: 14px;">
                     上一关
                 </button>
                 ` : ''}
-                <button class="control-btn restart-game-btn" style="padding: 12px 32px; font-size: 16px;">
+                <button class="control-btn restart-game-btn" style="padding: 12px 32px; font-size: 14px;">
                     再玩一次
                 </button>
                 ${this.currentLevel < this.levels.length - 1 ? `
-                <button class="control-btn next-level-btn" style="padding: 12px 32px; font-size: 16px; background-color: #ccc; cursor: not-allowed;">
+                <button class="control-btn next-level-btn" style="padding: 12px 32px; font-size: 14px; background-color: #ccc; cursor: not-allowed;">
                     下一关
                 </button>
                 ` : ''}
@@ -640,15 +640,15 @@ class SchulteGame {
             </p>
             <div class="game-controls">
                 ${this.currentLevel > 0 ? `
-                <button class="control-btn prev-level-btn" style="padding: 12px 32px; font-size: 16px;">
+                <button class="control-btn prev-level-btn" style="padding: 12px 32px; font-size: 14px;">
                     上一关
                 </button>
                 ` : ''}
-                <button class="control-btn restart-game-btn" style="padding: 12px 32px; font-size: 16px;">
+                <button class="control-btn restart-game-btn" style="padding: 12px 32px; font-size: 14px;">
                     再玩一次
                 </button>
                 ${this.currentLevel < this.levels.length - 1 ? `
-                <button class="control-btn next-level-btn" style="padding: 12px 32px; font-size: 16px;">
+                <button class="control-btn next-level-btn" style="padding: 12px 32px; font-size: 14px;">
                     进入下一关
                 </button>
                 ` : ''}
@@ -774,10 +774,10 @@ class SchulteGame {
                 你的专注力和视觉搜索能力已经得到了很好的训练！继续保持练习，挑战更高的水平！
             </p>
             <div class="game-controls">
-                <button class="control-btn prev-level-btn" style="padding: 12px 32px; font-size: 16px;">
+                <button class="control-btn prev-level-btn" style="padding: 12px 32px; font-size: 14px;">
                     上一关
                 </button>
-                <button class="control-btn restart-game-btn" style="padding: 12px 32px; font-size: 16px;">
+                <button class="control-btn restart-game-btn" style="padding: 12px 32px; font-size: 14px;">
                     重新开始
                 </button>
             </div>
@@ -1045,15 +1045,15 @@ class SchulteGame {
             </p>
             <div class="game-controls">
                 ${this.currentLevel > 0 ? `
-                <button class="control-btn prev-level-btn" style="padding: 12px 32px; font-size: 16px;">
+                <button class="control-btn prev-level-btn" style="padding: 12px 32px; font-size: 14px;">
                     上一关
                 </button>
                 ` : ''}
-                <button class="control-btn restart-game-btn" style="padding: 12px 32px; font-size: 16px;">
+                <button class="control-btn restart-game-btn" style="padding: 12px 32px; font-size: 14px;">
                     再玩一次
                 </button>
                 ${this.currentLevel < this.levels.length - 1 ? `
-                <button class="control-btn next-level-btn" style="padding: 12px 32px; font-size: 16px; background-color: #ccc; cursor: not-allowed;">
+                <button class="control-btn next-level-btn" style="padding: 12px 32px; font-size: 14px; background-color: #ccc; cursor: not-allowed;">
                     下一关
                 </button>
                 ` : ''}
