@@ -38,9 +38,9 @@ class SchulteGame {
             5: 45,   // 5×5 = 45秒
             6: 60,   // 6×6 = 60秒
             7: 90,   // 7×7 = 90秒
-            8: 120,  // 8×8 = 120秒
-            9: 150,  // 9×9 = 150秒
-            10: 180  // 10×10 = 180秒
+            8: 150,  // 8×8 = 150秒
+            9: 180,  // 9×9 = 180秒
+            10: 210  // 10×10 = 210秒
         };
         
         // 游戏状态
@@ -1212,6 +1212,18 @@ class SchulteGame {
                 // 显示字母
                 const charCode = 65 + ((this.currentItem - 1) % 26);
                 currentDisplay.textContent = String.fromCharCode(charCode);
+            }
+        }
+
+        // 更新终极目标
+        const ultimateDisplay = document.getElementById('schulte-ultimate');
+        if (ultimateDisplay) {
+            if (currentContentType === 'number') {
+                ultimateDisplay.textContent = this.totalItems;
+            } else {
+                // 显示字母
+                const charCode = 65 + ((this.totalItems - 1) % 26);
+                ultimateDisplay.textContent = String.fromCharCode(charCode);
             }
         }
 
