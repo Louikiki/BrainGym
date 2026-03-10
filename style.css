@@ -310,8 +310,7 @@ body {
 
 .game-area .left-content {
     flex-shrink: 0;
-    min-width: 250px;
-    max-width: 250px;
+    min-width: 300px;
     display: block;
 }
 

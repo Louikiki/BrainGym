@@ -49,7 +49,6 @@ class SchulteGame {
         this.endTime = null;
         this.isRunning = false;
         this.timerInterval = null;
-        this.errorCount = 0;
         
         // 颜色配置
         this.colors = [
@@ -152,7 +151,6 @@ class SchulteGame {
         }
 
         this.currentItem = 1;
-        this.errorCount = 0;
         this.isRunning = true;
         this.startTime = Date.now();
 
@@ -228,7 +226,6 @@ class SchulteGame {
     resetGame() {
         this.stopGame();
         this.currentItem = 1;
-        this.errorCount = 0;
         
         // 恢复隐藏的元素
         this.toggleGameElements(true);
@@ -244,7 +241,6 @@ class SchulteGame {
     retryGame() {
         this.stopGame();
         this.currentItem = 1;
-        this.errorCount = 0;
         
         // 显示现有的挑战失败提示
         this.showRetryFailure();
@@ -551,7 +547,6 @@ class SchulteGame {
             }
         } else {
             // 错误点击
-            this.errorCount++;
             cell.classList.add('wrong');
             
             // 播放错误音效
@@ -592,7 +587,6 @@ class SchulteGame {
                 time: time,
                 gridSize: this.gridSize,
                 contentType: this.contentType,
-                errorCount: this.errorCount,
                 totalItems: this.totalItems,
                 completed: true,
                 level: this.currentLevel + 1
@@ -632,7 +626,6 @@ class SchulteGame {
         const grid = document.getElementById('schulte-grid');
         if (!grid) return;
 
-        const accuracy = this.calculateAccuracy();
         const nextLevel = Math.min(this.levels.length - 1, this.currentLevel);
 
         // 创建遮罩元素，不清除原有网格内容
@@ -645,17 +638,11 @@ class SchulteGame {
             <p style="font-size: 24px; margin-bottom: 10px;">
                 用时：<span style="font-weight: 700; color: var(--primary-color);">${time.toFixed(2)}</span> 秒
             </p>
-            <p style="font-size: 18px; margin-bottom: 10px;">
-                错误次数：<span style="font-weight: 700; color: var(--primary-color);">${this.errorCount}</span> 次
-            </p>
-            <p style="font-size: 18px; margin-bottom: 20px;">
-                准确率：<span style="font-weight: 700; color: var(--primary-color);">${accuracy.toFixed(1)}</span>%
-            </p>
             <p style="font-size: 20px; margin-bottom: 20px; font-weight: 600;">
                 即将进入第 ${completedLevel + 2} 关：${this.levels[completedLevel + 1].name}
             </p>
             <p style="font-size: 16px; margin-bottom: 30px;">
-                ${this.getPerformanceComment(time, this.errorCount)}
+                ${this.getPerformanceComment(time)}
             </p>
             <div class="game-controls">
                 ${this.currentLevel > 0 ? `
@@ -773,8 +760,6 @@ class SchulteGame {
         const grid = document.getElementById('schulte-grid');
         if (!grid) return;
 
-        const accuracy = this.calculateAccuracy();
-
         // 创建遮罩元素，不清除原有网格内容
         const overlay = document.createElement('div');
         overlay.className = 'grid-content';
@@ -785,14 +770,11 @@ class SchulteGame {
             <p style="font-size: 24px; margin-bottom: 10px;">
                 用时：<span style="font-weight: 700; color: var(--primary-color);">${time.toFixed(2)}</span> 秒
             </p>
-            <p style="font-size: 18px; margin-bottom: 10px;">
-                错误次数：<span style="font-weight: 700; color: var(--primary-color);">${this.errorCount}</span> 次
-            </p>
-            <p style="font-size: 18px; margin-bottom: 20px;">
-                准确率：<span style="font-weight: 700; color: var(--primary-color);">${accuracy.toFixed(1)}</span>%
-            </p>
             <p style="font-size: 20px; margin-bottom: 30px; font-weight: 600;">
                 你已经成功挑战了所有 8 个关卡！
+            </p>
+            <p style="font-size: 16px; margin-bottom: 30px;">
+                ${this.getPerformanceComment(time)}
             </p>
             <p style="font-size: 16px; margin-bottom: 30px;">
                 你的专注力和视觉搜索能力已经得到了很好的训练！继续保持练习，挑战更高的水平！
@@ -984,19 +966,18 @@ class SchulteGame {
     }
 
     /**
-     * 根据用时和错误数获取评价
+     * 根据用时获取评价
      * @param {number} time - 用时（秒）
-     * @param {number} errors - 错误次数
      * @returns {string} 评价文本
      */
-    getPerformanceComment(time, errors) {
+    getPerformanceComment(time) {
         const avgTimePerItem = time / this.totalItems;
         
-        if (avgTimePerItem < 0.5 && errors === 0) {
+        if (avgTimePerItem < 0.5) {
             return '太棒了！你的专注力和反应速度非常出色！🌟';
-        } else if (avgTimePerItem < 1 && errors < 3) {
-            return '做得很好！继续保持这样的速度和准确性！💪';
-        } else if (avgTimePerItem < 2 && errors < 5) {
+        } else if (avgTimePerItem < 1) {
+            return '做得很好！继续保持这样的速度！💪';
+        } else if (avgTimePerItem < 2) {
             return '不错的成绩！多加练习会更上一层楼！👍';
         } else {
             return '继续努力，熟能生巧！保持专注，你会做得更好！🎯';
@@ -1236,12 +1217,6 @@ class SchulteGame {
         if (timeDisplay && !this.isRunning) {
             const timeLimit = this.timeLimitMap[this.gridSize] || 0;
             timeDisplay.textContent = timeLimit + 's';
-        }
-
-        // 更新错误次数
-        const errorsDisplay = document.getElementById('schulte-errors');
-        if (errorsDisplay) {
-            errorsDisplay.textContent = this.errorCount;
         }
 
         // 更新关卡显示
