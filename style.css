@@ -680,8 +680,8 @@ body {
 /* 当前目标样式 */
 #schulte-current {
     color: var(--primary-color);
-    font-size: 24px;
-    font-weight: 600;
+    font-size: 36px;
+    font-weight: 700;
 }
 
 /* 终极目标样式 */
