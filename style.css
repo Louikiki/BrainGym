@@ -677,6 +677,20 @@ body {
     font-weight: 600;
 }
 
+/* 当前目标样式 */
+#schulte-current {
+    color: var(--primary-color);
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* 终极目标样式 */
+#schulte-ultimate {
+    color: var(--text-secondary);
+    font-size: 24px;
+    font-weight: 600;
+}
+
 /* 舒尔特表网格 */
 .schulte-grid {
     display: grid;

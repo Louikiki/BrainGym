@@ -263,12 +263,6 @@ class SchulteGame {
             <p style="font-size: 24px; margin-bottom: 10px;">
                 用时：<span style="font-weight: 700; color: var(--primary-color);">0.0</span> 秒
             </p>
-            <p style="font-size: 18px; margin-bottom: 10px;">
-                错误次数：<span style="font-weight: 700; color: var(--primary-color);">${this.errorCount}</span> 次
-            </p>
-            <p style="font-size: 18px; margin-bottom: 20px;">
-                准确率：<span style="font-weight: 700; color: var(--primary-color);">100.0</span>%
-            </p>
             <p style="font-size: 16px; margin-bottom: 30px;">
                 重新挑战当前关卡
             </p>
@@ -843,8 +837,6 @@ class SchulteGame {
         const grid = document.getElementById('schulte-grid');
         if (!grid) return;
 
-        const accuracy = this.calculateAccuracy();
-
         // 创建遮罩元素，不清除原有网格内容
         const overlay = document.createElement('div');
         overlay.className = 'grid-content';
@@ -855,14 +847,8 @@ class SchulteGame {
             <p style="font-size: 24px; margin-bottom: 10px;">
                 用时：<span style="font-weight: 700;">${time.toFixed(2)}</span> 秒
             </p>
-            <p style="font-size: 18px; margin-bottom: 10px;">
-                错误次数：<span style="font-weight: 700;">${this.errorCount}</span> 次
-            </p>
-            <p style="font-size: 18px; margin-bottom: 20px;">
-                准确率：<span style="font-weight: 700;">${accuracy.toFixed(1)}</span>%
-            </p>
             <p style="font-size: 16px; margin-bottom: 30px;">
-                ${this.getPerformanceComment(time, this.errorCount)}
+                ${this.getPerformanceComment(time)}
             </p>
             <div class="game-controls">
                 ${this.currentLevel > 0 ? `
@@ -933,10 +919,8 @@ class SchulteGame {
                 timeLimit: timeLimit,
                 gridSize: this.gridSize,
                 contentType: this.contentType,
-                errorCount: this.errorCount,
                 completedItems: this.totalItems,
                 totalItems: this.totalItems,
-                accuracy: accuracy,
                 timeout: false,
                 completed: true
             });
@@ -953,16 +937,6 @@ class SchulteGame {
         if (resetBtn) {
             resetBtn.style.display = 'none';
         }
-    }
-
-    /**
-     * 计算准确率
-     * @returns {number} 准确率（0-100）
-     */
-    calculateAccuracy() {
-        const totalClicks = this.currentItem - 1 + this.errorCount;
-        if (totalClicks === 0) return 100;
-        return ((this.currentItem - 1) / totalClicks) * 100;
     }
 
     /**
@@ -1054,7 +1028,6 @@ class SchulteGame {
         console.log('Grid children count before:', grid.children.length);
 
         const completedItems = this.currentItem - 1;
-        const accuracy = this.calculateAccuracy();
         const actualTime = (Date.now() - this.startTime) / 1000;
 
         // 创建遮罩元素，不清除原有网格内容
@@ -1066,12 +1039,6 @@ class SchulteGame {
             </h3>
             <p style="font-size: 24px; margin-bottom: 10px;">
                 用时：<span style="font-weight: 700; color: var(--primary-color);">${actualTime.toFixed(2)}</span> 秒
-            </p>
-            <p style="font-size: 18px; margin-bottom: 10px;">
-                错误次数：<span style="font-weight: 700; color: var(--primary-color);">${this.errorCount}</span> 次
-            </p>
-            <p style="font-size: 18px; margin-bottom: 20px;">
-                准确率：<span style="font-weight: 700; color: var(--primary-color);">${accuracy.toFixed(1)}</span>%
             </p>
             <p style="font-size: 16px; margin-bottom: 30px;">
                 ${this.getTimeoutComment(completedItems, this.totalItems)}
@@ -1135,10 +1102,8 @@ class SchulteGame {
                 timeLimit: timeLimit,
                 gridSize: this.gridSize,
                 contentType: this.contentType,
-                errorCount: this.errorCount,
                 completedItems: completedItems,
                 totalItems: this.totalItems,
-                accuracy: accuracy,
                 timeout: true,
                 completed: false
             });
